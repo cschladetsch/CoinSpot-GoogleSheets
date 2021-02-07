@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <appSettings>
+        <add key="coinSpotKey" value="" />
+        <add key="coinSpotSecret" value="" />
+        <add key="coinSpotSite" value="https://www.coinspot.com.au"/>
+        <add key="spreadSheetId" value=""/>
+    </appSettings>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
+    </startup>
+</configuration>
