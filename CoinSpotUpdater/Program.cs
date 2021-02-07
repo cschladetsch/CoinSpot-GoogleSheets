@@ -95,7 +95,7 @@ namespace CoinSpotUpdater
             AddAction("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             AddAction("bal", "Show balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
-            AddAction("all", "Show balances and summary", ShowAll);
+            AddAction("a", "Show balances and summary", ShowAll);
             AddAction("help", "Show help", ShowHelp);
         }
 
@@ -165,7 +165,7 @@ namespace CoinSpotUpdater
         {
             var prefix = "/api/ro/";
             var url = input.Substring(5);
-            Console.WriteLine(_coinspotService.CallAPI(prefix + url, "{}"));
+            Console.WriteLine(_coinspotService.ApiCall(prefix + url, "{}"));
         }
 
         private float GetSpreadSheetValue()

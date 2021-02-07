@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace CoinSpotUpdater
 {
-    public class Balances
+    public class CoinSpotBalances
     {
         public class Holding
         {

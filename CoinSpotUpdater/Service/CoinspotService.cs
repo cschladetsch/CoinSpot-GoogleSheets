@@ -14,43 +14,29 @@ namespace CoinSpotUpdater
     {
         private readonly string _key;
         private readonly string _secret;
-        private string _baseUrl;
-        private string _baseReadOnlyUrl = "/api/ro/my/";
+        private readonly string _baseUrl;
+        private const string _baseReadOnlyUrl = "/api/ro/my/";
 
         public CoinspotService()
         {
-            _key = ConfigurationManager.AppSettings.Get("coinSpotKey");
-            _secret = ConfigurationManager.AppSettings.Get("coinSpotSecret");
-            _baseUrl = ConfigurationManager.AppSettings.Get("coinSpotSite");
+            _key = FromAppSettings("coinSpotKey");
+            _secret = FromAppSettings("coinSpotSecret");
+            _baseUrl = FromAppSettings("coinSpotSite");
         }
 
-        internal Balances GetMyBalances()
-        {
-            var json = GetMyBalancesJson();
-            return JsonConvert.DeserializeObject<Balances>(json);
-        }
+        private string FromAppSettings(string key) => ConfigurationManager.AppSettings.Get(key);
 
-        public float GetPortfolioValue()
-        {
-            return GetMyBalances().GetTotal();
-        }
+        public float GetPortfolioValue() => GetMyBalances().GetTotal();
 
-        public string GetMyBalancesJson(string JSONParameters = "{}")
-        {
-            return RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
-        }
+        public CoinSpotBalances GetMyBalances() => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
 
-        public string GetCoinBalanceJson(string coinType)
-        {
-            return RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
-        }
+        public string GetMyBalancesJson(string JSONParameters = "{}") => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
-        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
-        {
-            return CallAPI(endPointUrl, JSONParameters);
-        }
+        public string GetCoinBalanceJson(string coinType) => RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
-        public string CallAPI(string endPoint, string jsonParameters)
+        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}") => ApiCall(endPointUrl, JSONParameters);
+
+        public string ApiCall(string endPoint, string jsonParameters)
         {
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -64,16 +50,24 @@ namespace CoinSpotUpdater
             var parameters = jsonParameters.Trim().Insert(1, nonceParameter);
             var parameterBytes = Encoding.UTF8.GetBytes(parameters);
             var signedData = SignData(parameterBytes);
+            var request = MakeRequest(endpointURL, parameterBytes, signedData);
 
-            //Print(endpointURL);
+            return MakeCall(parameterBytes, request);
+        }
 
+        private WebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
+        {
             WebRequest request = HttpWebRequest.Create(endpointURL);
             request.Method = "POST";
             request.Headers.Add("key", _key);
             request.Headers.Add("sign", signedData.ToLower());
             request.ContentType = "application/json";
             request.ContentLength = parameterBytes.Length;
+            return request;
+        }
 
+        private static string MakeCall(byte[] parameterBytes, WebRequest request)
+        {
             string responseText;
             try
             {
@@ -91,25 +85,15 @@ namespace CoinSpotUpdater
             return responseText;
         }
 
-        private static void Print(string endpointURL)
-        {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine("     POST: " + endpointURL);
-            Console.ForegroundColor = color;
-        }
-
         private string SignData(byte[] JSONData)
         {
-            var HMAC = new HMACSHA512(Encoding.UTF8.GetBytes(_secret));
-            var EncodedBytes = HMAC.ComputeHash(JSONData);
-
-            StringBuilder stringBuilder = new StringBuilder();
-
-            for (int i = 0; i <= EncodedBytes.Length - 1; i++)
-                stringBuilder.Append(EncodedBytes[i].ToString("X2"));
-
-            return stringBuilder.ToString();
+            var encodedBytes = new HMACSHA512(Encoding.UTF8.GetBytes(_secret)).ComputeHash(JSONData);
+            var sb = new StringBuilder();
+            for (int i = 0; i <= encodedBytes.Length - 1; i++)
+            {
+                sb.Append(encodedBytes[i].ToString("X2"));
+            }
+            return sb.ToString();
         }
     }
 }
