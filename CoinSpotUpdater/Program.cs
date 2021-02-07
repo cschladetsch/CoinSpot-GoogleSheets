@@ -93,7 +93,14 @@ namespace CoinSpotUpdater
             _commands["up"] = new Command("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             _commands["bal"] = new Command("bal", "Show balances of all coins", ShowBalances);
             _commands["q"] = new Command("q", "Quit", () => _quit = true);
+            _commands["all"] = new Command("all", "Show balances and summary", ShowAll);
             _commands["help"] = new Command("help", "Show help", ShowHelp);
+        }
+
+        private void ShowAll()
+        {
+            ShowStatus();
+            ShowBalances();
         }
 
         private void ShowHelp()

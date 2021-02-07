@@ -7,6 +7,9 @@ _config.yml
 packages/
 .vs/
 
+# vi
+tags
+
 *.obj
 *.dll
 
