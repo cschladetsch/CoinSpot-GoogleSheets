@@ -66,35 +66,42 @@ namespace CoinSpotUpdater
 
                 if (_commands.TryGetValue(input, out Command cmd))
                 {
-                    var color = Console.ForegroundColor;
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    _commands[input].Action();
-                    Console.ForegroundColor = color;
+                    WriteColored(_commands[input].Action, ConsoleColor.Yellow);
                 }
                 else
                 {
-                    Console.WriteLine("Type 'help' for a list of commands.");
+                    WriteColored(() => Console.WriteLine("Type 'help' for a list of commands."), ConsoleColor.Red);
                 }
             }
         }
 
-        private static void WritePrompt()
+        private void WritePrompt()
         {
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("# ");
+            WriteColored(() => Console.Write("# "), ConsoleColor.Green);
+        }
+
+        private void WriteColored(Action action, ConsoleColor color)
+        {
+            var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
+            action();
+            Console.ForegroundColor = currentColor;
         }
 
         private void AddActions()
         {
-            _commands["g"] = new Command("g", "Show total gains as a percent of spent", ShowGainPercent);
-            _commands["sum"] = new Command("sum", "Show summary status of all holdings", ShowStatus);
-            _commands["up"] = new Command("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
-            _commands["bal"] = new Command("bal", "Show balances of all coins", ShowBalances);
-            _commands["q"] = new Command("q", "Quit", () => _quit = true);
-            _commands["all"] = new Command("all", "Show balances and summary", ShowAll);
-            _commands["help"] = new Command("help", "Show help", ShowHelp);
+            AddAction("g", "Show total gains as a percent of spent", ShowGainPercent);
+            AddAction("sum", "Show summary status of all holdings", ShowStatus);
+            AddAction("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
+            AddAction("bal", "Show balances of all coins", ShowBalances);
+            AddAction("q", "Quit", () => _quit = true);
+            AddAction("all", "Show balances and summary", ShowAll);
+            AddAction("help", "Show help", ShowHelp);
+        }
+
+        private void AddAction(string text, string desciption, Action action)
+        {
+            _commands[text] = new Command(text, desciption, action);
         }
 
         private void ShowAll()
@@ -109,9 +116,9 @@ namespace CoinSpotUpdater
             {
                 var cmd = kv.Value;
                 var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"{cmd.Text,6}  ");
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine($"{cmd.Description}");
                 Console.ForegroundColor = color;
             }
@@ -135,11 +142,10 @@ namespace CoinSpotUpdater
         {
             var balances = _coinspotService.GetMyBalances();
             Console.Write(balances);
-            var color = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write($"TOTAL: ");
-            Console.WriteLine($"{balances.GetTotal():C} AUD");
-            Console.ForegroundColor = color;
+            WriteColored(() => { 
+                Console.Write($"TOTAL: ");
+                Console.WriteLine($"{balances.GetTotal():C} AUD");
+            }, ConsoleColor.Cyan);
         }
 
         private void ShowStatus()
