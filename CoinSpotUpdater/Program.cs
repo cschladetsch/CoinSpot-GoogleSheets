@@ -96,11 +96,12 @@ namespace CoinSpotUpdater
             foreach (var kv in _commands)
             {
                 var cmd = kv.Value;
-                if (cmd.Text == "help")
-                {
-                    continue;
-                }
-                Console.WriteLine($"'{cmd.Text:5}' {cmd.Description}");
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{cmd.Text,6}  ");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine($"{cmd.Description}");
+                Console.ForegroundColor = color;
             }
         }
 
@@ -132,8 +133,10 @@ namespace CoinSpotUpdater
             var value = entries[1][0];
             var gain = entries[2][0];
             var gainPercent = entries[3][0];
-            Console.WriteLine($"Spent= {spent:C}, Value= {value:C}");
-            Console.WriteLine($"Gain = {gain:C},  Gain= {gainPercent:0.##}");
+            Console.WriteLine($"Spent = {spent:C}");
+            Console.WriteLine($"Value = {value:C}");
+            Console.WriteLine($"Gain$ = {gain:C}");
+            Console.WriteLine($"Gain% = {gainPercent:0.##}");
         }
 
         private void CallCoinSpot(string input)
