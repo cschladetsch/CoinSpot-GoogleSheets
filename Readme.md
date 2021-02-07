@@ -1,4 +1,5 @@
 # CoinSpot/Google Sheets Updater
+[![CodeFactor](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets/badge)](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets) [![License](https://img.shields.io/github/license/cschladetsch/CoinSpot-GoogleSheets.svg?label=License&maxAge=86400)](./LICENSE) [![Release](https://img.shields.io/github/release/cschladetsch/CoinSpot-GoogleSheets.svg?label=Release&maxAge=60)](https://github.com/cschladetsch/CoinSpot-GoogleSheets/releases/latest)
 
 This simple console application reads values from your *CoinSpot* account, and writes the total values of your holdings to a *GoogleSheet* spread sheet.
 
