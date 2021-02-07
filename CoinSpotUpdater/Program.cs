@@ -21,7 +21,7 @@ namespace CoinSpotUpdater
 
         private static void PrintHeader()
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine();
@@ -141,7 +141,7 @@ namespace CoinSpotUpdater
         private void ShowBalances()
         {
             var balances = _coinspotService.GetMyBalances();
-            Console.Write(balances);
+            WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
             WriteColored(() => { 
                 Console.Write($"TOTAL: ");
                 Console.WriteLine($"{balances.GetTotal():C} AUD");
