@@ -84,7 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
-    <Compile Include="Service\CoinSpotBalances.cs" />
+    <Compile Include="Service\CoinSpotServlceBalances.cs" />
     <Compile Include="Service\CoinspotService.cs" />
     <Compile Include="Service\GoogleSheetsService.cs" />
     <Compile Include="Program.cs" />

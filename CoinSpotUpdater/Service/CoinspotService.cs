@@ -28,7 +28,7 @@ namespace CoinSpotUpdater
 
         public float GetPortfolioValue() => GetMyBalances().GetTotal();
 
-        public CoinSpotBalances GetMyBalances() => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
+        public CoinSpotServlceBalances GetMyBalances() => JsonConvert.DeserializeObject<CoinSpotServlceBalances>(GetMyBalancesJson());
 
         public string GetMyBalancesJson(string JSONParameters = "{}") => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
