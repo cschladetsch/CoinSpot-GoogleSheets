@@ -21,7 +21,7 @@ namespace CoinSpotUpdater
 
         private static void PrintHeader()
         {
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine();
