@@ -44,7 +44,7 @@ namespace CoinSpotUpdater
         {
             while (!_quit)
             {
-                Console.Write("> ");
+                Console.Write("# ");
                 var input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input))
                 {
