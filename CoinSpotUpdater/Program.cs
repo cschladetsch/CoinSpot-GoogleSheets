@@ -116,7 +116,7 @@ namespace CoinSpotUpdater
             _googleSheetsService.SetValue(TotalValueRange, _coinspotService.GetPortfolioValue());
             _googleSheetsService.SetValue(UpdateDateRange, DateTime.Now.ToString("dd MMM"));
             _googleSheetsService.SetValue(UpdateTimeRange, DateTime.Now.ToShortTimeString());
-            Console.WriteLine("Updated SpreadSheet");// https://docs.google.com/spreadsheets/d/1RsgO5LVA55SLz5JdJpK9o9gWNlpm-1TjWm5_IzTEyEU");
+            Console.WriteLine("Updated SpreadSheet");
         }
 
         private void ShowBalances()
