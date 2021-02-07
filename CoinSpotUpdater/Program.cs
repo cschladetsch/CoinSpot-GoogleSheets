@@ -116,7 +116,7 @@ namespace CoinSpotUpdater
             var gain = entries[2][0];
             var gainPercent = entries[3][0];
             Console.WriteLine($"Spent= {spent:C}, Value= {value:C}");
-            Console.WriteLine($"Gain = {gain:C},  Gain= %{gainPercent:0.##}");
+            Console.WriteLine($"Gain = {gain:C},  Gain= {gainPercent:0.##}");
         }
 
         private void CallCoinSpot(string input)
