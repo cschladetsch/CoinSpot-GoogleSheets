@@ -15,7 +15,9 @@ namespace CoinSpotUpdater
 
         static void Main(string[] args)
         {
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            Console.ForegroundColor = ConsoleColor.Gray;
             Console.WriteLine();
             new Program().Run(args);
         }
@@ -44,7 +46,7 @@ namespace CoinSpotUpdater
         {
             while (!_quit)
             {
-                Console.Write("# ");
+                WritePrompt();
                 var input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input))
                 {
@@ -59,13 +61,24 @@ namespace CoinSpotUpdater
 
                 if (_commands.TryGetValue(input, out Command cmd))
                 {
+                    var color = Console.ForegroundColor;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     _commands[input].Action();
+                    Console.ForegroundColor = color;
                 }
                 else
                 {
                     Console.WriteLine("Type 'help' for a list of commands.");
                 }
             }
+        }
+
+        private static void WritePrompt()
+        {
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("# ");
+            Console.ForegroundColor = color;
         }
 
         private void AddActions()
@@ -83,6 +96,10 @@ namespace CoinSpotUpdater
             foreach (var kv in _commands)
             {
                 var cmd = kv.Value;
+                if (cmd.Text == "help")
+                {
+                    continue;
+                }
                 Console.WriteLine($"'{cmd.Text:5}' {cmd.Description}");
             }
         }
@@ -90,7 +107,7 @@ namespace CoinSpotUpdater
         private void ShowGainPercent()
         {
             var entries = _googleSheetsService.GetRange("Summary!G8");
-            Console.WriteLine($"Gain= {entries[0][0]:0.##}");
+            Console.WriteLine($"Gain {entries[0][0]:0.##}");
         }
 
         private void UpdateGoogleSpreadSheet()

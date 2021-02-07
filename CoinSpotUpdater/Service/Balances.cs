@@ -36,7 +36,7 @@ namespace CoinSpotUpdater
                 foreach (var kv in holding)
                 {
                     var h = kv.Value;
-                    sb.AppendLine($"{kv.Key}: {h.balance,8:0.######}*{h.rate,-8:0.######}  =  {h.audbalance:C} AUD");
+                    sb.AppendLine($"{kv.Key}: {h.balance,8:0.######}*{h.rate:C} = {h.audbalance:C} AUD");
                 }
             }
             return sb.ToString();
