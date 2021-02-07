@@ -20,7 +20,7 @@ You can use this framework to connect your inputs from CoinSpot to your outputs/
 
 An example session using an alt account of mine:
 
-![Sample Session](Resources/demo.png)
+![Sample Session](Resources/Demo.png)
 
 ## Setup
 
