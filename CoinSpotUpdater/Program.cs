@@ -89,7 +89,7 @@ namespace CoinSpotUpdater
         private void AddActions()
         {
             _commands["g"] = new Command("g", "Show total gains as a percent of spent", ShowGainPercent);
-            _commands["st"] = new Command("st", "Show status of all holdings", ShowStatus);
+            _commands["sum"] = new Command("sum", "Show summary status of all holdings", ShowStatus);
             _commands["up"] = new Command("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             _commands["bal"] = new Command("bal", "Show balances of all coins", ShowBalances);
             _commands["q"] = new Command("q", "Quit", () => _quit = true);
@@ -127,8 +127,12 @@ namespace CoinSpotUpdater
         private void ShowBalances()
         {
             var balances = _coinspotService.GetMyBalances();
-            Console.WriteLine(balances);
-            Console.WriteLine($"TOTAL: ${balances.GetTotal()} AUD");
+            Console.Write(balances);
+            var color = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write($"TOTAL: ");
+            Console.WriteLine($"{balances.GetTotal():C} AUD");
+            Console.ForegroundColor = color;
         }
 
         private void ShowStatus()
