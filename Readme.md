@@ -23,6 +23,8 @@ An example session using an alt account of mine:
 
 ![Sample Session](Resources/Demo.png)
 
+NOTE: I don't update the image with every change the app, so it may differ from what you see when you build it. Any drastic changes, I'll update the image.
+
 ## Setup
 
 Most configuration is stored in `App.config`. Start with `App.config.example` and rename it to `App.config`.
