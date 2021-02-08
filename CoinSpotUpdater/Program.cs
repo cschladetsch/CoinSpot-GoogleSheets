@@ -132,10 +132,44 @@ namespace CoinSpotUpdater
 
         private void UpdateGoogleSpreadSheet()
         {
-            _googleSheetsService.SetValue(TotalValueRange, _coinspotService.GetPortfolioValue());
-            _googleSheetsService.SetValue(UpdateDateRange, DateTime.Now.ToString("dd MMM"));
-            _googleSheetsService.SetValue(UpdateTimeRange, DateTime.Now.ToShortTimeString());
+            float value = _coinspotService.GetPortfolioValue();
+            var now = DateTime.Now;
+            var date = now.ToString("dd MMM yy");
+            var time = now.ToLongTimeString();
+
+            _googleSheetsService.SetValue(UpdateDateRange, date);
+            _googleSheetsService.SetValue(UpdateTimeRange, time);
+            _googleSheetsService.SetValue(TotalValueRange, value);
+
+            var list = new List<object>
+            {
+                date,
+                time,
+                "=Transactions!$C$1",
+                value,
+            };
+
+            var appended = _googleSheetsService.Append("Table!B2", list);
+            AppendGainsTable(appended.TableRange);
             Console.WriteLine("Updated SpreadSheet");
+        }
+
+        internal void AppendGainsTable(string tableRange)
+        {
+            var last = tableRange.LastIndexOf(':');
+            var bottomRight = tableRange.Substring(last + 1);
+            int index = 0;
+            while (char.IsLetter(bottomRight[index]))
+            {
+                index++;
+            }
+            int row = int.Parse(bottomRight.Substring(index)) + 1;
+            var list = new List<object>
+            {
+                $"=E{row}-D{row}",
+                $"=G{row}/E{row}"
+            };
+            _googleSheetsService.Append("Table!G2", list);
         }
 
         private void ShowBalances()

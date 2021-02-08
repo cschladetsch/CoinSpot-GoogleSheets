@@ -72,5 +72,20 @@ namespace CoinSpotUpdater
             var response = request.Execute();
             return response.Values;
         }
+
+        internal AppendValuesResponse Append(string range, IList<IList<object>> values)
+        {
+            var body = new ValueRange() { Values = values };
+            var request = _sheetsService.Spreadsheets.Values.Append(body, _spreadSheetId, range);
+            request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
+            var response = request.Execute();
+            //Console.WriteLine($"{response.Updates.UpdatedCells} cells appended.");
+            return response;
+        }
+
+        internal AppendValuesResponse Append(string range, IList<object> values)
+        {
+            return Append(range, new List<IList<object>> { values });
+        }
     }
 }
