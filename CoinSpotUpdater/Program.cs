@@ -134,7 +134,7 @@ namespace CoinSpotUpdater
         {
             float value = _coinspotService.GetPortfolioValue();
             var now = DateTime.Now;
-            var date = now.ToString("dd MMM yy");
+            var date = now.ToString("ddd dd MMM yy");
             var time = now.ToLongTimeString();
 
             _googleSheetsService.SetValue(UpdateDateRange, date);
@@ -143,7 +143,7 @@ namespace CoinSpotUpdater
 
             var list = new List<object>
             {
-                date,
+                now.ToString("dd MM yy"),
                 time,
                 "=Transactions!$C$1",
                 value,
@@ -167,7 +167,7 @@ namespace CoinSpotUpdater
             var list = new List<object>
             {
                 $"=E{row}-D{row}",
-                $"=G{row}/E{row}"
+                $"=G{row}/D{row}"
             };
             _googleSheetsService.Append("Table!G2", list);
         }
