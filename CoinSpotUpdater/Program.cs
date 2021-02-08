@@ -19,6 +19,16 @@ namespace CoinSpotUpdater
             new Program().Run(args);
         }
 
+        public Program()
+        {
+            _googleSheetsService = new GoogleSheetsService();
+            _coinspotService = new CoinspotService();
+
+            AddActions();
+            ShowHelp();
+            Console.WriteLine();
+        }
+
         private static void PrintHeader()
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -29,13 +39,6 @@ namespace CoinSpotUpdater
 
         private void Run(string[] args)
         {
-            _googleSheetsService = new GoogleSheetsService();
-            _coinspotService = new CoinspotService();
-
-            AddActions();
-            ShowHelp();
-            Console.WriteLine();
-
             try
             {
                 Repl();
@@ -91,12 +94,12 @@ namespace CoinSpotUpdater
         private void AddActions()
         {
             AddAction("g", "Show total gains as a percent of spent", ShowGainPercent);
-            AddAction("sum", "Show summary status of all holdings", ShowStatus);
-            AddAction("up", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
-            AddAction("bal", "Show balances of all coins", ShowBalances);
+            AddAction("s", "Show summary status of all holdings", ShowStatus);
+            AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
+            AddAction("b", "Show balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Show balances and summary", ShowAll);
-            AddAction("help", "Show help", ShowHelp);
+            AddAction("?", "Show help", ShowHelp);
         }
 
         private void AddAction(string text, string desciption, Action action)
@@ -126,8 +129,10 @@ namespace CoinSpotUpdater
 
         private void ShowGainPercent()
         {
-            var entries = _googleSheetsService.GetRange("Summary!G8");
-            Console.WriteLine($"Gain {entries[0][0]:0.##}");
+            var entries = _googleSheetsService.GetRange("Summary!G7:G8");
+            var dollar = entries[0][0];
+            var percent = entries[1][0];
+            Console.WriteLine($"Gain {dollar:C}, {percent:0.##}");
         }
 
         private void UpdateGoogleSpreadSheet()
@@ -137,13 +142,24 @@ namespace CoinSpotUpdater
             var date = now.ToString("ddd dd MMM yy");
             var time = now.ToLongTimeString();
 
+            UpdateSummary(value, date, time);
+            UpdateTable(value, now, time);
+
+            Console.WriteLine("Updated SpreadSheet");
+        }
+
+        private void UpdateSummary(float value, string date, string time)
+        {
             _googleSheetsService.SetValue(UpdateDateRange, date);
             _googleSheetsService.SetValue(UpdateTimeRange, time);
             _googleSheetsService.SetValue(TotalValueRange, value);
+        }
 
+        private void UpdateTable(float value, DateTime now, string time)
+        {
             var list = new List<object>
             {
-                now.ToString("dd MM yy"),
+                now.ToString("dd MMM yy"),
                 time,
                 "=Transactions!$C$1",
                 value,
@@ -151,7 +167,6 @@ namespace CoinSpotUpdater
 
             var appended = _googleSheetsService.Append("Table!B2", list);
             AppendGainsTable(appended.TableRange);
-            Console.WriteLine("Updated SpreadSheet");
         }
 
         internal void AppendGainsTable(string tableRange)
