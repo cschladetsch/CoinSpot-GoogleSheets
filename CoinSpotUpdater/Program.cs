@@ -129,6 +129,8 @@ namespace CoinSpotUpdater
 
         private void ShowGainPercent()
         {
+            UpdateGoogleSpreadSheet();
+            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(.5f));
             var entries = _googleSheetsService.GetRange("Summary!G7:G8");
             var dollar = entries[0][0];
             var percent = entries[1][0];
