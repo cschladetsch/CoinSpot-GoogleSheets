@@ -69,6 +69,7 @@ namespace CoinSpotUpdater
 
                 if (_commands.TryGetValue(input, out Command cmd))
                 {
+                    WriteColored(() => Console.WriteLine(DateTime.Now), ConsoleColor.DarkGray);
                     WriteColored(_commands[input].Action, ConsoleColor.Yellow);
                 }
                 else
@@ -141,7 +142,7 @@ namespace CoinSpotUpdater
         {
             float value = _coinspotService.GetPortfolioValue();
             var now = DateTime.Now;
-            var date = now.ToString("ddd dd MMM yy");
+            var date = now.ToString("dd MMM yy");
             var time = now.ToLongTimeString();
 
             UpdateSummary(value, date, time);
