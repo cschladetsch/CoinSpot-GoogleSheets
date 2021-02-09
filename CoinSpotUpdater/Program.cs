@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Threading;
 
 namespace CoinSpotUpdater
 {
@@ -12,6 +14,7 @@ namespace CoinSpotUpdater
         private CoinspotService _coinspotService;
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private bool _quit;
+        private Timer _timer;
 
         static void Main(string[] args)
         {
@@ -24,9 +27,31 @@ namespace CoinSpotUpdater
             _googleSheetsService = new GoogleSheetsService();
             _coinspotService = new CoinspotService();
 
+            PrepareUpdateTimer();
             AddActions();
             ShowHelp();
             Console.WriteLine();
+        }
+
+        
+        private void PrepareUpdateTimer()
+        {
+            var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
+            if (minutes > 0)
+            {
+                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
+            }
+        }
+
+        private void TimerCallback(object arg)
+        {
+            Console.WriteLine();
+            Console.WriteLine("\nAuto-update:");
+            WriteDateTime();
+            ShowBalances();
+            Thread.Sleep(TimeSpan.FromSeconds(1));
+            UpdateGoogleSpreadSheet();
+            WritePrompt();
         }
 
         private static void PrintHeader()
@@ -69,7 +94,7 @@ namespace CoinSpotUpdater
 
                 if (_commands.TryGetValue(input, out Command cmd))
                 {
-                    WriteColored(() => Console.WriteLine(DateTime.Now), ConsoleColor.DarkGray);
+                    WriteDateTime();
                     WriteColored(_commands[input].Action, ConsoleColor.Yellow);
                 }
                 else
@@ -79,9 +104,15 @@ namespace CoinSpotUpdater
             }
         }
 
+        private void WriteDateTime()
+        {
+            WriteColored(() => Console.WriteLine(DateTime.Now), ConsoleColor.Magenta);
+        }
+
         private void WritePrompt()
         {
             WriteColored(() => Console.Write("# "), ConsoleColor.Green);
+            Console.ForegroundColor = ConsoleColor.White;
         }
 
         private void WriteColored(Action action, ConsoleColor color)
