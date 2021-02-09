@@ -34,7 +34,6 @@ namespace CoinSpotUpdater
             Console.WriteLine();
         }
 
-        
         private void PrepareUpdateTimer()
         {
             var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
