@@ -25,17 +25,23 @@ namespace CoinSpotUpdater
             _baseUrl = FromAppSettings("coinSpotSite");
         }
 
-        private string FromAppSettings(string key) => ConfigurationManager.AppSettings.Get(key);
+        private string FromAppSettings(string key)
+            => ConfigurationManager.AppSettings.Get(key);
 
-        public float GetPortfolioValue() => GetMyBalances().GetTotal();
+        public float GetPortfolioValue()
+            => GetMyBalances().GetTotal();
 
-        public CoinSpotServlceBalances GetMyBalances() => JsonConvert.DeserializeObject<CoinSpotServlceBalances>(GetMyBalancesJson());
+        public CoinSpotServlceBalances GetMyBalances()
+            => JsonConvert.DeserializeObject<CoinSpotServlceBalances>(GetMyBalancesJson());
 
-        public string GetMyBalancesJson(string JSONParameters = "{}") => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
+        public string GetMyBalancesJson(string JSONParameters = "{}")
+            => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
-        public string GetCoinBalanceJson(string coinType) => RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
+        public string GetCoinBalanceJson(string coinType)
+            => RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
-        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}") => ApiCall(endPointUrl, JSONParameters);
+        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
+            => ApiCall(endPointUrl, JSONParameters);
 
         public string ApiCall(string endPoint, string jsonParameters)
         {
@@ -51,9 +57,7 @@ namespace CoinSpotUpdater
             var parameters = jsonParameters.Trim().Insert(1, nonceParameter);
             var parameterBytes = Encoding.UTF8.GetBytes(parameters);
             var signedData = SignData(parameterBytes);
-            Trace("Making request...");
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
-            Trace("...done");
 
             return MakeCall(parameterBytes, request);
         }
@@ -81,21 +85,15 @@ namespace CoinSpotUpdater
             string responseText;
             try
             {
-                Trace("Reading response...");
                 using (var stream = request.GetRequestStream())
                 {
-                    Trace("Writing params...");
                     stream.Write(parameterBytes, 0, parameterBytes.Length);
-                    Trace("...done");
                     stream.Close();
                 }
-                Trace("    Making StreamReader....");
                 using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
                 {
                     responseText = reader.ReadToEnd();
                 }
-                Trace("    ...done");
-                Trace("...done");
             }
             catch (Exception ex)
             {

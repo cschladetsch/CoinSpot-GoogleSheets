@@ -180,7 +180,6 @@ namespace CoinSpotUpdater
                 var time = now.ToLongTimeString();
 
                 UpdateSummary(value, date, time);
-                //Console.WriteLine("Updating table");
                 UpdateTable(value, now, time);
 
                 Console.WriteLine("Updated SpreadSheet");
@@ -247,6 +246,7 @@ namespace CoinSpotUpdater
             var value = entries[1][0];
             var gain = entries[2][0];
             var gainPercent = entries[3][0];
+
             Console.WriteLine($"Spent = {spent:C}");
             Console.WriteLine($"Value = {value:C}");
             Console.WriteLine($"Gain$ = {gain:C}");
