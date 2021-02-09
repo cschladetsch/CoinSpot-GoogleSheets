@@ -39,7 +39,7 @@ namespace CoinSpotUpdater
             var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
             if (minutes > 0)
             {
-                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
+                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(-1), TimeSpan.FromMinutes(minutes));
             }
         }
 
@@ -99,7 +99,7 @@ namespace CoinSpotUpdater
                 }
                 else
                 {
-                    WriteColored(() => Console.WriteLine("Type 'help' for a list of commands."), ConsoleColor.Red);
+                    WriteColored(() => Console.WriteLine("Type '?' for a list of commands."), ConsoleColor.Red);
                 }
             }
         }
