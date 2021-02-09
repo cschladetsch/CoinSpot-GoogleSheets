@@ -39,17 +39,18 @@ namespace CoinSpotUpdater
             var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
             if (minutes > 0)
             {
-                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(-1), TimeSpan.FromMinutes(minutes));
+                Console.WriteLine($"Update timer set for {minutes} minutes");
+                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
             }
         }
 
         private void TimerCallback(object arg)
         {
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             Console.WriteLine();
             Console.WriteLine("\nAuto-update:");
             WriteDateTime();
-            ShowBalances();
-            Thread.Sleep(TimeSpan.FromSeconds(1));
             UpdateGoogleSpreadSheet();
             WritePrompt();
         }
@@ -162,7 +163,7 @@ namespace CoinSpotUpdater
         private void ShowGainPercent()
         {
             UpdateGoogleSpreadSheet();
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(.5f));
+            Thread.Sleep(TimeSpan.FromSeconds(.5f));
             var entries = _googleSheetsService.GetRange("Summary!G7:G8");
             var dollar = entries[0][0];
             var percent = entries[1][0];
@@ -171,15 +172,22 @@ namespace CoinSpotUpdater
 
         private void UpdateGoogleSpreadSheet()
         {
-            float value = _coinspotService.GetPortfolioValue();
-            var now = DateTime.Now;
-            var date = now.ToString("dd MMM yy");
-            var time = now.ToLongTimeString();
+            try
+            {
+                float value = _coinspotService.GetPortfolioValue();
+                var now = DateTime.Now;
+                var date = now.ToString("dd MMM yy");
+                var time = now.ToLongTimeString();
 
-            UpdateSummary(value, date, time);
-            UpdateTable(value, now, time);
+                UpdateSummary(value, date, time);
+                UpdateTable(value, now, time);
 
-            Console.WriteLine("Updated SpreadSheet");
+                Console.WriteLine("Updated SpreadSheet");
+            }
+            catch (Exception e)
+            {
+                WriteColored(() => Console.WriteLine($"Error updating: {e.Message}"), ConsoleColor.Red);
+            }
         }
 
         private void UpdateSummary(float value, string date, string time)

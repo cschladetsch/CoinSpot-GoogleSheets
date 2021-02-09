@@ -16,6 +16,7 @@ namespace CoinSpotUpdater
         private readonly string _secret;
         private readonly string _baseUrl;
         private const string _baseReadOnlyUrl = "/api/ro/my/";
+        private static bool _debug;
 
         public CoinspotService()
         {
@@ -50,14 +51,23 @@ namespace CoinSpotUpdater
             var parameters = jsonParameters.Trim().Insert(1, nonceParameter);
             var parameterBytes = Encoding.UTF8.GetBytes(parameters);
             var signedData = SignData(parameterBytes);
+            Trace("Making request...");
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
+            Trace("...done");
 
             return MakeCall(parameterBytes, request);
         }
 
-        private WebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
+        private static void Trace(string v)
         {
-            WebRequest request = HttpWebRequest.Create(endpointURL);
+            if (_debug)
+                Console.WriteLine(v);
+        }
+
+        private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
+        {
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(endpointURL);
+            request.KeepAlive = false;
             request.Method = "POST";
             request.Headers.Add("key", _key);
             request.Headers.Add("sign", signedData.ToLower());
@@ -66,16 +76,26 @@ namespace CoinSpotUpdater
             return request;
         }
 
-        private static string MakeCall(byte[] parameterBytes, WebRequest request)
+        private static string MakeCall(byte[] parameterBytes, HttpWebRequest request)
         {
             string responseText;
             try
             {
+                Trace("Reading response...");
                 using (var stream = request.GetRequestStream())
                 {
+                    Trace("Writing params...");
                     stream.Write(parameterBytes, 0, parameterBytes.Length);
+                    Trace("...done");
+                    stream.Close();
                 }
-                responseText = new StreamReader(request.GetResponse().GetResponseStream()).ReadToEnd();
+                Trace("    Making StreamReader....");
+                using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
+                {
+                    responseText = reader.ReadToEnd();
+                }
+                Trace("    ...done");
+                Trace("...done");
             }
             catch (Exception ex)
             {
