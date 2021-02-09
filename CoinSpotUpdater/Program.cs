@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Threading;
+using System.Configuration;
+using System.Collections.Generic;
 
 namespace CoinSpotUpdater
 {
@@ -30,6 +30,7 @@ namespace CoinSpotUpdater
             PrepareUpdateTimer();
             AddActions();
             ShowHelp();
+
             Console.WriteLine();
         }
 
@@ -57,9 +58,8 @@ namespace CoinSpotUpdater
 
         private static void PrintHeader()
         {
-            Console.ForegroundColor = ConsoleColor.DarkGray;
-            Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             Console.WriteLine();
         }
 
@@ -154,7 +154,7 @@ namespace CoinSpotUpdater
                 var color = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"{cmd.Text,6}  ");
-                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine($"{cmd.Description}");
                 Console.ForegroundColor = color;
             }
@@ -180,6 +180,7 @@ namespace CoinSpotUpdater
                 var time = now.ToLongTimeString();
 
                 UpdateSummary(value, date, time);
+                //Console.WriteLine("Updating table");
                 UpdateTable(value, now, time);
 
                 Console.WriteLine("Updated SpreadSheet");
