@@ -48,6 +48,28 @@ It's a simple console application, which starts by printing the help screen.
 
 Follow the dots.
 
+## Automatic Updating
+In the `App.Config` file, you can change the `updateTimerPeriod` setting to automatically update your spreadsheet every N seconds.
+
+### Using a Raspberry Pi
+You don't want to keep your desktop on 24/7 just to write updates to your spreadsheet. But if you have a Raspberry Pi, you can use that to send updates at a very low power consumption that costs a few cents/day in power to run.
+
+* ssh into the pi
+* Install [mono](https://linuxize.com/post/how-to-install-mono-on-ubuntu-18-04/) on the pi. 
+* Use `scp -rp [src] [dest]` to copy the files to the pi. You need to copy recursively as there are sub-folders for the tokens.
+* Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions.
+* Start a new *screen* session with ^A^C.
+* Run *CoinSpotUpdater.exe*
+* Detach the process with ^A^D
+
+You can now close the `ssh` window to the pi. The CoinSpotUpdater process will still keep running on the pi, even if you turn off your desktop.
+
+Later, `ssh` back into the pi and type `screen -ls` to find the session you want then `screen -r ###` where ### is the number output in the `screen -ls` command. 
+
+You are now back Controlling the CoinSpotUpdater.
+
+There are probably easier ways to do this, but I was already familiar with scp and screen so that's how I did it. Feel free to leave feedback on better ways!
+
 ## Help
 
 Raise an issue on *GitHub* if you have any questions or bug reports, or [email me](mailto:christian@schladetsch.com) directly. Happy to help set you up.
