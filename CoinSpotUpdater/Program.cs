@@ -3,6 +3,9 @@ using System.Threading;
 using System.Configuration;
 using System.Collections.Generic;
 
+using CoinSpotUpdater.GoogleSheets;
+using CoinSpotUpdater.CoinSpot;
+
 namespace CoinSpotUpdater
 {
     class Program
@@ -137,7 +140,14 @@ namespace CoinSpotUpdater
             AddAction("b", "Show balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Show balances and summary", ShowAll);
+            AddAction("l", "Get all Prices", ShowAllPrices);
             AddAction("?", "Show help", ShowHelp);
+        }
+
+        private void ShowAllPrices()
+        {
+            var result = _coinspotService.GetAllPrices();
+            WriteLine(result);
         }
 
         private void AddAction(string text, string desciption, Action action)

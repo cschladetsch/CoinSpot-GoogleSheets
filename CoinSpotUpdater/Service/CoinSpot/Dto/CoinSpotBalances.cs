@@ -1,19 +1,12 @@
 ﻿using System.Text;
 using System.Collections.Generic;
 
-namespace CoinSpotUpdater
+namespace CoinSpotUpdater.CoinSpot.Dto
 {
-    public class CoinSpotServlceBalances
+    public class CoinSpotBalances
     {
-        public class Holding
-        {
-            public float balance;
-            public float audbalance;
-            public float rate;
-        }
-
         public string status;
-        public List<Dictionary<string, Holding>> balances;
+        public List<Dictionary<string, CoinSpotHolding>> balances;
 
         public float GetTotal()
         {

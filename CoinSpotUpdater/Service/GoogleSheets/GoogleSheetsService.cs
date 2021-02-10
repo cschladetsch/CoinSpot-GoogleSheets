@@ -9,7 +9,7 @@ using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 
-namespace CoinSpotUpdater
+namespace CoinSpotUpdater.GoogleSheets
 {
     // see https://developers.google.com/sheets/api/quickstart/dotnet
     class GoogleSheetsService
@@ -23,7 +23,6 @@ namespace CoinSpotUpdater
         public GoogleSheetsService(string appName = ApplicationName)
         {
             ConnectToSpreadSheetService();
-
             _spreadSheetId = ConfigurationManager.AppSettings.Get("spreadSheetId");
         }
 

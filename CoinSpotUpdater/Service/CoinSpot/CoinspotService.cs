@@ -6,8 +6,9 @@ using System.Text;
 using System.Configuration;
 
 using Newtonsoft.Json;
+using CoinSpotUpdater.CoinSpot.Dto;
 
-namespace CoinSpotUpdater
+namespace CoinSpotUpdater.CoinSpot
 {
     // see https://www.coinspot.com.au/api for full api
     class CoinspotService
@@ -30,8 +31,8 @@ namespace CoinSpotUpdater
         public float GetPortfolioValue()
             => GetMyBalances().GetTotal();
 
-        public CoinSpotServlceBalances GetMyBalances()
-            => JsonConvert.DeserializeObject<CoinSpotServlceBalances>(GetMyBalancesJson());
+        public CoinSpotBalances GetMyBalances()
+            => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
 
         public string GetMyBalancesJson(string JSONParameters = "{}")
             => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
@@ -41,6 +42,26 @@ namespace CoinSpotUpdater
 
         private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
             => ApiCall(endPointUrl, JSONParameters);
+
+        internal CoinSpotAllPrices GetAllPrices()
+        {
+            var json = PublicApiCall("/pubapi/latest");
+            var result = JsonConvert.DeserializeObject<CoinSpotAllPrices>(json);
+            return result;
+        }
+
+        public string PublicApiCall(string url)
+        {
+            var call = _baseUrl + url;
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(call);
+            using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
+            {
+                return reader.ReadToEnd();
+            }
+        }
+
+        public string ApiCall(string endPoint)
+            => ApiCall(endPoint, "{}");
 
         public string ApiCall(string endPoint, string jsonParameters)
         {
@@ -106,5 +127,6 @@ namespace CoinSpotUpdater
             }
             return sb.ToString();
         }
+
     }
 }
