@@ -14,7 +14,6 @@ This app will also automatically update fields in a Google Sheet of yours, if yo
 Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish.
 
 ## Example Screenshot
-
 This is using an alt account setup, but shows the basics of what you can expect.
 
 Note that when you use the 'up' command, if you have the Spreadsheet open in a browser window, it will instantly update as well.
@@ -28,7 +27,6 @@ An example session using an alt account of mine:
 NOTE: I don't update the image with every change the app, so it may differ from what you see when you build it. Any drastic changes, I'll update the image.
 
 ## Setup
-
 Most configuration is stored in `App.config`. Start with `App.config.example` and rename it to `App.config`.
 
 You will need a CoinSpot account. The default is CoinSpot Australia.
@@ -36,11 +34,9 @@ You will need a CoinSpot account. The default is CoinSpot Australia.
 You will also need a Google account and at least on Google Sheet if you wish to use the auto-update methods. You can use the app without this of course.
 
 ## CoinSpot API
-
 Login to CoinSpot and get an API key and secret. Add them to `App.config`.
 
 ## GoogleSheets API
-
 Get your Google API credentials from [this page](https://developers.google.com/sheets/api/quickstart/dotnet). Put it in the folder along side the executable. Add your spreadsheet id to `App.config`.
 
 ## Usage

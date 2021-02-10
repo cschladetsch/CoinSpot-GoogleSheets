@@ -31,7 +31,7 @@ namespace CoinSpotUpdater
             AddActions();
             ShowHelp();
 
-            Console.WriteLine();
+            WriteLine();
         }
 
         private void PrepareUpdateTimer()
@@ -39,7 +39,7 @@ namespace CoinSpotUpdater
             var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
             if (minutes > 0)
             {
-                Console.WriteLine($"Update timer set for {minutes} minutes");
+                WriteLine($"Update timer set for {minutes} minutes");
                 _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
             }
         }
@@ -48,8 +48,8 @@ namespace CoinSpotUpdater
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
-            Console.WriteLine();
-            Console.WriteLine("\nAuto-update:");
+            WriteLine();
+            WriteLine("\nAuto-update:");
             WriteDateTime();
             UpdateGoogleSpreadSheet();
             WritePrompt();
@@ -58,9 +58,15 @@ namespace CoinSpotUpdater
         private static void PrintHeader()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            Console.WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
-            Console.WriteLine();
+            WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            WriteLine();
         }
+
+        private static void WriteLine()
+            => Console.WriteLine();
+
+        private static void WriteLine(object text)
+            => Console.WriteLine(text);
 
         private void Run(string[] args)
         {
@@ -70,7 +76,7 @@ namespace CoinSpotUpdater
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error: {e.Message}");
+                WriteLine($"Error: {e.Message}");
                 Repl();
             }
         }
@@ -99,14 +105,14 @@ namespace CoinSpotUpdater
                 }
                 else
                 {
-                    WriteColored(() => Console.WriteLine("Type '?' for a list of commands."), ConsoleColor.Red);
+                    WriteColored(() => WriteLine("Type '?' for a list of commands."), ConsoleColor.Red);
                 }
             }
         }
 
         private void WriteDateTime()
         {
-            WriteColored(() => Console.WriteLine(DateTime.Now), ConsoleColor.Magenta);
+            WriteColored(() => WriteLine(DateTime.Now), ConsoleColor.Magenta);
         }
 
         private void WritePrompt()
@@ -154,7 +160,7 @@ namespace CoinSpotUpdater
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"{cmd.Text,6}  ");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"{cmd.Description}");
+                WriteLine($"{cmd.Description}");
                 Console.ForegroundColor = color;
             }
         }
@@ -166,7 +172,7 @@ namespace CoinSpotUpdater
             var entries = _googleSheetsService.GetRange("Summary!G7:G8");
             var dollar = entries[0][0];
             var percent = entries[1][0];
-            Console.WriteLine($"Gain {dollar:C}, {percent:0.##}");
+            WriteLine($"Gain {dollar:C}, {percent:0.##}");
         }
 
         private void UpdateGoogleSpreadSheet()
@@ -181,11 +187,11 @@ namespace CoinSpotUpdater
                 UpdateSummary(value, date, time);
                 UpdateTable(value, now, time);
 
-                Console.WriteLine("Updated SpreadSheet");
+                WriteLine("Updated SpreadSheet");
             }
             catch (Exception e)
             {
-                WriteColored(() => Console.WriteLine($"Error updating: {e.Message}"), ConsoleColor.Red);
+                WriteColored(() => WriteLine($"Error updating: {e.Message}"), ConsoleColor.Red);
             }
         }
 
@@ -234,7 +240,7 @@ namespace CoinSpotUpdater
             WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
             WriteColored(() => { 
                 Console.Write($"TOTAL: ");
-                Console.WriteLine($"{balances.GetTotal():C} AUD");
+                WriteLine($"{balances.GetTotal():C} AUD");
             }, ConsoleColor.Cyan);
         }
 
@@ -246,24 +252,17 @@ namespace CoinSpotUpdater
             var gain = entries[2][0];
             var gainPercent = entries[3][0];
 
-            Console.WriteLine($"Spent = {spent:C}");
-            Console.WriteLine($"Value = {value:C}");
-            Console.WriteLine($"Gain$ = {gain:C}");
-            Console.WriteLine($"Gain% = {gainPercent:0.##}");
+            WriteLine($"Spent = {spent:C}");
+            WriteLine($"Value = {value:C}");
+            WriteLine($"Gain$ = {gain:C}");
+            WriteLine($"Gain% = {gainPercent:0.##}");
         }
 
         private void CallCoinSpot(string input)
         {
             var prefix = "/api/ro/";
             var url = input.Substring(5);
-            Console.WriteLine(_coinspotService.ApiCall(prefix + url, "{}"));
-        }
-
-        private float GetSpreadSheetValue()
-        {
-            var result = _googleSheetsService.GetRange(TotalValueRange);
-            var text = result[0][0].ToString().Substring(1);
-            return float.Parse(text);
+            WriteLine(_coinspotService.ApiCall(prefix + url, "{}"));
         }
     }
 }

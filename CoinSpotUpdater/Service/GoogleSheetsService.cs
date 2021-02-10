@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Configuration;
+using System.Collections.Generic;
 
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Sheets.v4;
@@ -78,9 +78,7 @@ namespace CoinSpotUpdater
             var body = new ValueRange() { Values = values };
             var request = _sheetsService.Spreadsheets.Values.Append(body, _spreadSheetId, range);
             request.ValueInputOption = SpreadsheetsResource.ValuesResource.AppendRequest.ValueInputOptionEnum.USERENTERED;
-            var response = request.Execute();
-            //Console.WriteLine($"{response.Updates.UpdatedCells} cells appended.");
-            return response;
+            return request.Execute();
         }
 
         internal AppendValuesResponse Append(string range, IList<object> values)

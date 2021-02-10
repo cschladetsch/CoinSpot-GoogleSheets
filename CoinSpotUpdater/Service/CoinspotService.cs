@@ -16,7 +16,6 @@ namespace CoinSpotUpdater
         private readonly string _secret;
         private readonly string _baseUrl;
         private const string _baseReadOnlyUrl = "/api/ro/my/";
-        private static bool _debug;
 
         public CoinspotService()
         {
@@ -60,12 +59,6 @@ namespace CoinSpotUpdater
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
 
             return MakeCall(parameterBytes, request);
-        }
-
-        private static void Trace(string v)
-        {
-            if (_debug)
-                Console.WriteLine(v);
         }
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
