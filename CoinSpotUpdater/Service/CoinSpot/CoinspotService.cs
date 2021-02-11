@@ -53,7 +53,7 @@ namespace CoinSpotUpdater.CoinSpot
         public string PublicApiCall(string url)
         {
             var call = _baseUrl + url;
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(call);
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(call);
             using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
             {
                 return reader.ReadToEnd();

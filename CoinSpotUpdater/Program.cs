@@ -135,8 +135,8 @@ namespace CoinSpotUpdater
         private void AddActions()
         {
             AddAction("g", "Show total gains as a percent of spent", ShowGainPercent);
-            AddAction("s", "Show summary status of all holdings", ShowStatus);
-            AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
+            //AddAction("s", "Show summary status of all holdings", ShowStatus);
+            //AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             AddAction("b", "Show balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Show balances and summary", ShowAll);
@@ -177,12 +177,15 @@ namespace CoinSpotUpdater
 
         private void ShowGainPercent()
         {
-            UpdateGoogleSpreadSheet();
-            Thread.Sleep(TimeSpan.FromSeconds(.5f));
-            var entries = _googleSheetsService.GetRange("Summary!G7:G8");
-            var dollar = entries[0][0];
-            var percent = entries[1][0];
-            WriteLine($"Gain {dollar:C}, {percent:0.##}");
+            var entries = _googleSheetsService.GetRange("Summary!G5");
+            float spent = float.Parse(entries[0][0].ToString().Substring(1));
+            float value = _coinspotService.GetPortfolioValue();
+            float gainDollar = value - spent;
+            float gainPercent = 100.0f*gainDollar/spent;
+            WriteLine($"Spent:   {spent:C} AUD");
+            WriteLine($"Value:   {value:C} AUD");
+            WriteLine($"Gain:    {gainDollar:C} AUD");
+            WriteLine($"Percent: {gainPercent:00.00}%");
         }
 
         private void UpdateGoogleSpreadSheet()
