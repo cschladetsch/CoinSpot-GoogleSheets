@@ -25,9 +25,6 @@ namespace CoinSpotUpdater.CoinSpot
             _baseUrl = FromAppSettings("coinSpotSite");
         }
 
-        private string FromAppSettings(string key)
-            => ConfigurationManager.AppSettings.Get(key);
-
         public float GetPortfolioValue()
             => GetMyBalances().GetTotal();
 
@@ -40,15 +37,14 @@ namespace CoinSpotUpdater.CoinSpot
         public string GetCoinBalanceJson(string coinType)
             => RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
-        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
-            => ApiCall(endPointUrl, JSONParameters);
-
         internal CoinSpotAllPrices GetAllPrices()
         {
             var json = PublicApiCall("/pubapi/latest");
-            var result = JsonConvert.DeserializeObject<CoinSpotAllPrices>(json);
-            return result;
+            return JsonConvert.DeserializeObject<CoinSpotAllPrices>(json);
         }
+
+        public string ApiCall(string endPoint)
+            => ApiCall(endPoint, "{}");
 
         public string PublicApiCall(string url)
         {
@@ -59,9 +55,6 @@ namespace CoinSpotUpdater.CoinSpot
                 return reader.ReadToEnd();
             }
         }
-
-        public string ApiCall(string endPoint)
-            => ApiCall(endPoint, "{}");
 
         public string ApiCall(string endPoint, string jsonParameters)
         {
@@ -81,6 +74,12 @@ namespace CoinSpotUpdater.CoinSpot
 
             return MakeCall(parameterBytes, request);
         }
+
+        private string FromAppSettings(string key)
+            => ConfigurationManager.AppSettings.Get(key);
+
+        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
+            => ApiCall(endPointUrl, JSONParameters);
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
         {
@@ -127,6 +126,5 @@ namespace CoinSpotUpdater.CoinSpot
             }
             return sb.ToString();
         }
-
     }
 }
