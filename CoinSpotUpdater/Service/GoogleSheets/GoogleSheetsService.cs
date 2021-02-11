@@ -15,12 +15,12 @@ namespace CoinSpotUpdater.GoogleSheets
     class GoogleSheetsService
     {
         // If modifying these scopes, delete your previously saved credentials
-        private static string[] Scopes = { SheetsService.Scope.Spreadsheets, SheetsService.Scope.Drive };
-        private const string ApplicationName = "CoinSpot Sheets Updater";
+        private readonly string[] Scopes = { SheetsService.Scope.Spreadsheets, SheetsService.Scope.Drive };
+        private readonly string ApplicationName = "CoinSpot Sheets Updater";
+        private readonly string _spreadSheetId;
         private SheetsService _sheetsService;
-        private string _spreadSheetId;
 
-        public GoogleSheetsService(string appName = ApplicationName)
+        public GoogleSheetsService()
         {
             ConnectToSpreadSheetService();
             _spreadSheetId = ConfigurationManager.AppSettings.Get("spreadSheetId");
