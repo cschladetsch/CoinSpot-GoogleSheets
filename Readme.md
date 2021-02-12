@@ -1,7 +1,7 @@
 # CoinSpot/Google Sheets Updater
 [![CodeFactor](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets/badge)](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets) [![License](https://img.shields.io/github/license/cschladetsch/CoinSpot-GoogleSheets.svg?label=License&maxAge=86400)](./LICENSE) [![Release](https://img.shields.io/github/release/cschladetsch/CoinSpot-GoogleSheets.svg?label=Release&maxAge=60)](https://github.com/cschladetsch/CoinSpot-GoogleSheets/releases/latest)
 
-Intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
+Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
 
 This simple console application reads values from your *CoinSpot* account, and writes the total values of your holdings to a *GoogleSheet* spread sheet.
 
@@ -13,7 +13,7 @@ This app will also automatically update fields in a Google Sheet of yours, if yo
 
 Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish.
 
-*Note*: Balances will **NOT** include your unused account funds on CoinSpot. The same is true for 'total spent', though I'll need fully automate this. This is all a bit more complicated than I first suspected.
+*Note*: Balances will **not** include your unused account funds on CoinSpot. This is intentional. The same is true for 'total spent', though I'll need fully automate this. This is all a bit more complicated than I first suspected.
 
 ## Example Screenshot
 This is using an alt account setup, but shows the basics of what you can expect.
@@ -29,7 +29,7 @@ An example session using an alt account of mine:
 NOTE: I don't update the image with every change the app, so it may differ from what you see when you build it. Any drastic changes, I'll update the image.
 
 ## Setup
-Most configuration is stored in `App.config`. Start with `App.config.example` and rename it to `App.config`.
+Most configuration is stored in `App.config`. Start with `App.config.example` and rename it to `App.config`. Add all the required keys and secrets.
 
 You will need a CoinSpot account. The default is CoinSpot Australia.
 
@@ -52,12 +52,13 @@ In the `App.Config` file, you can change the `updateTimerPeriod` setting to auto
 ### Using a Raspberry Pi
 You don't want to keep your desktop on 24/7 just to write updates to your spreadsheet. But if you have a Raspberry Pi, you can use that to send updates at a very low power consumption that costs a few cents/day in power to run.
 
+* get everything working locally as you wish
 * ssh into the pi
 * set your real locale with `sudo dpkg-reconfigure tzdata`
-* Install [mono](https://linuxize.com/post/how-to-install-mono-on-ubuntu-18-04/) on the pi. 
-* Use `scp -rp [src] [dest]` to copy the files to the pi. You need to copy recursively as there are sub-folders for the tokens.
-* Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions.
-* Start a new *screen* session with ^A^C.
+* Install [mono](https://linuxize.com/post/how-to-install-mono-on-ubuntu-18-04/) on the pi
+* Use `scp -rp [src] [dest]` to copy the files to the pi. You need to copy recursively as there are sub-folders for the token
+* Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions
+* Start a new *screen* session with ^A^C
 * Run *CoinSpotUpdater.exe*
 * Detach the process with ^A^D
 
@@ -65,7 +66,7 @@ You can now close the `ssh` window to the pi. The CoinSpotUpdater process will s
 
 Later, `ssh` back into the pi and type `screen -ls` to find the session you want then `screen -r ###` where ### is the number output in the `screen -ls` command. 
 
-You are now back Controlling the CoinSpotUpdater.
+You are now back controlling the CoinSpotUpdater.
 
 There are probably easier ways to do this, but I was already familiar with scp and screen so that's how I did it. Feel free to leave feedback on better ways!
 
