@@ -86,9 +86,14 @@
     <Compile Include="Command.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotAllPrices.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBalances.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotCoinStatus.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotDeposit.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotDeposits.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotHolding.cs" />
     <Compile Include="Service\CoinSpot\CoinspotService.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotSellOrder.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotTransactions.cs" />
     <Compile Include="Service\GoogleSheets\GoogleSheetsService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

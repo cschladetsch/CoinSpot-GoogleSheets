@@ -43,6 +43,20 @@ namespace CoinSpotUpdater.CoinSpot
             return JsonConvert.DeserializeObject<CoinSpotAllPrices>(json);
         }
 
+        internal CoinSpotTransactions GetAllTransactions()
+        {
+            var json = RequestCSJson(_baseReadOnlyUrl + "transactions/open");
+            return JsonConvert.DeserializeObject<CoinSpotTransactions>(json);
+        }
+
+        internal CoinSpotDeposits GetAllDeposits()
+        {
+            //var startTime = (DateTime.Now - TimeSpan.FromDays(90)).ToString("yyyy-MM-dd");
+            //var json = RequestCSJson(_baseReadOnlyUrl + "desposits", "startdate:'" + startTime + "'");
+            var json = RequestCSJson(_baseReadOnlyUrl + "deposits");
+            return JsonConvert.DeserializeObject<CoinSpotDeposits>(json);
+        }
+
         public string ApiCall(string endPoint)
             => ApiCall(endPoint, "{}");
 

@@ -141,7 +141,33 @@ namespace CoinSpotUpdater
             AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Show balances and summary", ShowAll);
             AddAction("l", "Get all Prices", ShowAllPrices);
+            AddAction("d", "Show Total Deposits", ShowAllDeposits);
+            AddAction("dt", "Show Deposits", ShowDeposits);
+            AddAction("buy", "Show Buy Orders", ShowBuyOrders);
+            AddAction("sell", "Show Sell Orders", ShowSellOrders);
+            AddAction("tr", "Show Transactions", ShowTransactions);
             AddAction("?", "Show help", ShowHelp);
+        }
+
+        private void ShowSellOrders()
+            => WriteLine(_coinspotService.GetAllTransactions().SellOrdersToString());
+
+        private void ShowBuyOrders()
+            => WriteLine(_coinspotService.GetAllTransactions().BuyOrdersToString());
+
+        private void ShowTransactions()
+            => WriteLine(_coinspotService.GetAllTransactions());
+
+        private void ShowDeposits()
+        {
+            var result = _coinspotService.GetAllDeposits();
+            WriteLine(result);
+        }
+
+        private void ShowAllDeposits()
+        {
+            var result = _coinspotService.GetAllDeposits();
+            WriteLine($"Total deposited: {result.GetTotalDeposited()} AUD");
         }
 
         private void ShowAllPrices()
