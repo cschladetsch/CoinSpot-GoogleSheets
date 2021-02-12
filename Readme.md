@@ -7,11 +7,13 @@ This simple console application reads values from your *CoinSpot* account, and w
 
 Of course you will need to supply your own API keys and secrets for the APIs used.
 
-It's faster to type 'g' or 'bal' into the console of this app, rather than opening a new tab, logging in, and checking things.
+It's faster to type 'g' or 'b' into the console of this app, rather than opening a new tab, logging in, and checking things.
 
 This app will also automatically update fields in a Google Sheet of yours, if you like that sort of  thing. This requires extra setup of course, but it's not hard.
 
 Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish.
+
+*Note*: Balances will **NOT** include your unused account funds on CoinSpot. The same is true for 'total spent', though I'll need fully automate this. This is all a bit more complicated than I first suspected.
 
 ## Example Screenshot
 This is using an alt account setup, but shows the basics of what you can expect.
