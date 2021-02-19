@@ -86,6 +86,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotAllPrices.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBalances.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotBuyOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotCoinStatus.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotDeposit.cs" />
