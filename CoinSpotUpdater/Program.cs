@@ -135,8 +135,8 @@ namespace CoinSpotUpdater
         private void AddActions()
         {
             AddAction("g", "Show total gains as a percent of spent", ShowGainPercent);
-            //AddAction("s", "Show summary status of all holdings", ShowStatus);
-            //AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
+            AddAction("s", "Show summary status of all holdings", ShowStatus);
+            AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             AddAction("b", "Show balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Show balances and summary", ShowAll);
