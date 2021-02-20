@@ -11,14 +11,10 @@ namespace CoinSpotUpdater.CoinSpot.Dto
         public List<CoinSpotOrder> buyorders;
 
         public string BuyOrdersToString()
-        {
-            return OrdersToString(buyorders);
-        }
+            => OrdersToString(buyorders);
 
         public string SellOrdersToString()
-        {
-            return OrdersToString(sellorders);
-        }
+            => OrdersToString(sellorders);
 
         private string OrdersToString(IList<CoinSpotOrder> sellorders)
         {

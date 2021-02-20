@@ -13,8 +13,6 @@ namespace CoinSpotUpdater.CoinSpot.Dto
         public float audtotal;
 
         public override string ToString()
-        {
-            return $"market={market}, amount={amount}, audtotal={audtotal}";
-        }
+            => $"market={market}, amount={amount}, audtotal={audtotal}";
     }
 }

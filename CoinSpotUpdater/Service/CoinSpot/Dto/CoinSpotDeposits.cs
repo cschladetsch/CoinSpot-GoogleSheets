@@ -35,8 +35,6 @@ namespace CoinSpotUpdater.CoinSpot.Dto
         }
 
         private static DateTime Earliest()
-        {
-            return DateTime.Parse("2020-11-01T00:00:00Z");
-        }
+            => DateTime.Parse("2020-11-01T00:00:00Z");
     }
 }

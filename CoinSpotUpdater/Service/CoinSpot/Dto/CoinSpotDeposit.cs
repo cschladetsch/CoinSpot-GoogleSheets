@@ -11,8 +11,6 @@ namespace CoinSpotUpdater.CoinSpot.Dto
         public string reference;
 
         public override string ToString()
-        {
-            return $"{amount} AUD on {created}";
-        }
+            =>  $"{amount:C} on {created}";
     }
 }
