@@ -10,16 +10,24 @@ namespace CoinSpotUpdater
 {
     class Program
     {
+        // you may want to change these to match your local setup
+        // basically, I have three Sheets:
+        //      1. Summary. Shows a summary of all spent and holdings
+        //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
+        //      4. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
+        private const string SummaryRange = "Summary!G5:G8";
         private const string TotalValueRange = "Summary!G6";
         private const string UpdateDateRange = "Summary!G4";
         private const string SpentRange = "Summary!G5";
         private const string UpdateTimeRange = "Summary!H4";
+        private const string ValueTable = "Table!B2";
+        private const string GainsTable = "Table!G2";
+        private const string SpentSourceRange = "Spent!G1";
 
         private GoogleSheetsService _googleSheetsService;
         private CoinspotService _coinspotService;
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private bool _quit;
-        private Timer _timer;
 
         static void Main(string[] args)
         {
@@ -45,7 +53,7 @@ namespace CoinSpotUpdater
             if (minutes > 0)
             {
                 WriteLine($"Update timer set for {minutes} minutes");
-                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
+                new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
             }
         }
 
@@ -249,11 +257,11 @@ namespace CoinSpotUpdater
             {
                 now.ToString("dd MMM yy"),
                 time,
-                "=Transactions!$C$1",
+                SpentSourceRange,
                 value,
             };
 
-            var appended = _googleSheetsService.Append("Table!B2", list);
+            var appended = _googleSheetsService.Append(ValueTable, list);
             AppendGainsTable(appended.TableRange);
         }
 
@@ -272,7 +280,7 @@ namespace CoinSpotUpdater
                 $"=E{row}-D{row}",
                 $"=G{row}/D{row}"
             };
-            _googleSheetsService.Append("Table!G2", list);
+            _googleSheetsService.Append(GainsTable, list);
         }
 
         private void ShowBalances()
@@ -287,7 +295,7 @@ namespace CoinSpotUpdater
 
         private void ShowStatus()
         {
-            var entries = _googleSheetsService.GetRange("Summary!G5:G8");
+            var entries = _googleSheetsService.GetRange(SummaryRange);
             var spent = entries[0][0];
             var value = entries[1][0];
             var gain = entries[2][0];
