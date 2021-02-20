@@ -1,4 +1,5 @@
 # CoinSpot/Google Sheets Updater
+
 [![CodeFactor](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets/badge)](https://www.codefactor.io/repository/github/cschladetsch/CoinSpot-GoogleSheets) [![License](https://img.shields.io/github/license/cschladetsch/CoinSpot-GoogleSheets.svg?label=License&maxAge=86400)](./LICENSE) [![Release](https://img.shields.io/github/release/cschladetsch/CoinSpot-GoogleSheets.svg?label=Release&maxAge=60)](https://github.com/cschladetsch/CoinSpot-GoogleSheets/releases/latest)
 
 Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
@@ -78,7 +79,7 @@ Then you can use `ssh pi@yourpiname` to quickly get into your _pi_ without havin
 * Login to the pi
 * Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions. Run `screen`
 * Start a new *screen* session with \^A\^C
-* Change the _updateTimerPeriod_ element in App.Config to set the number of minute between updates. The default is zero
+* Change the _updateTimerPeriod_ element in *App.Config* to set the number of minute between updates. The default is zero
 * Run *CoinSpotUpdater.exe*
 * Detach the process with \^A\^D
 

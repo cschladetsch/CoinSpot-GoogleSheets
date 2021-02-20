@@ -25,6 +25,9 @@ namespace CoinSpotUpdater.CoinSpot
             _baseUrl = FromAppSettings("coinSpotSite");
         }
 
+        public static string FromAppSettings(string key)
+            => ConfigurationManager.AppSettings.Get(key);
+
         public float GetPortfolioValue()
             => GetMyBalances().GetTotal();
 
@@ -32,33 +35,22 @@ namespace CoinSpotUpdater.CoinSpot
             => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
 
         public string GetMyBalancesJson(string JSONParameters = "{}")
-            => RequestCSJson(_baseReadOnlyUrl + "balances", JSONParameters);
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
         public string GetCoinBalanceJson(string coinType)
-            => RequestCSJson(_baseReadOnlyUrl + "balances/:" + coinType);
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
         internal CoinSpotAllPrices GetAllPrices()
-        {
-            var json = PublicApiCall("/pubapi/latest");
-            return JsonConvert.DeserializeObject<CoinSpotAllPrices>(json);
-        }
+            => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
 
         internal CoinSpotTransactions GetAllTransactions()
-        {
-            var json = RequestCSJson(_baseReadOnlyUrl + "transactions/open");
-            return JsonConvert.DeserializeObject<CoinSpotTransactions>(json);
-        }
+            => JsonConvert.DeserializeObject<CoinSpotTransactions>(PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
 
         internal CoinSpotDeposits GetAllDeposits()
-        {
-            //var startTime = (DateTime.Now - TimeSpan.FromDays(90)).ToString("yyyy-MM-dd");
-            //var json = RequestCSJson(_baseReadOnlyUrl + "desposits", "startdate:'" + startTime + "'");
-            var json = RequestCSJson(_baseReadOnlyUrl + "deposits");
-            return JsonConvert.DeserializeObject<CoinSpotDeposits>(json);
-        }
+            => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
-        public string ApiCall(string endPoint)
-            => ApiCall(endPoint, "{}");
+        public string PrivateApiCall(string endPoint)
+            => PrivateApiCall(endPoint, "{}");
 
         public string PublicApiCall(string url)
         {
@@ -70,7 +62,7 @@ namespace CoinSpotUpdater.CoinSpot
             }
         }
 
-        public string ApiCall(string endPoint, string jsonParameters)
+        public string PrivateApiCall(string endPoint, string jsonParameters)
         {
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -89,11 +81,8 @@ namespace CoinSpotUpdater.CoinSpot
             return MakeCall(parameterBytes, request);
         }
 
-        private string FromAppSettings(string key)
-            => ConfigurationManager.AppSettings.Get(key);
-
-        private string RequestCSJson(string endPointUrl, string JSONParameters = "{}")
-            => ApiCall(endPointUrl, JSONParameters);
+        private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
+            => PrivateApiCall(endPointUrl, JSONParameters);
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
         {

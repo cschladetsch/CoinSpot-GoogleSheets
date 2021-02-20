@@ -24,10 +24,10 @@ namespace CoinSpotUpdater
         private const string GainsTable = "Table!G2";
         private const string SpentSourceRange = "Spent!G1";
 
-        private GoogleSheetsService _googleSheetsService;
-        private CoinspotService _coinspotService;
-        private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private bool _quit;
+        private CoinspotService _coinspotService;
+        private GoogleSheetsService _googleSheetsService;
+        private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
 
         static void Main(string[] args)
         {
@@ -177,7 +177,7 @@ namespace CoinSpotUpdater
         private void ShowAllDeposits()
         {
             var result = _coinspotService.GetAllDeposits();
-            WriteLine($"Total deposited: {result.GetTotalDeposited()} AUD");
+            WriteLine($"Total deposited: {result.GetTotalDeposited()}");
         }
 
         private void ShowAllPrices()
@@ -218,9 +218,9 @@ namespace CoinSpotUpdater
             float value = _coinspotService.GetPortfolioValue();
             float gainDollar = value - spent;
             float gainPercent = 100.0f*gainDollar/spent;
-            WriteLine($"Spent:   {spent:C} AUD");
-            WriteLine($"Value:   {value:C} AUD");
-            WriteLine($"Gain:    {gainDollar:C} AUD");
+            WriteLine($"Spent:   {spent:C}");
+            WriteLine($"Value:   {value:C}");
+            WriteLine($"Gain:    {gainDollar:C}");
             WriteLine($"Percent: {gainPercent:00.00}%");
         }
 
@@ -228,7 +228,7 @@ namespace CoinSpotUpdater
         {
             try
             {
-                float value = _coinspotService.GetPortfolioValue();
+                var value = _coinspotService.GetPortfolioValue();
                 var now = DateTime.Now;
                 var date = now.ToString("dd MMM yy");
                 var time = now.ToLongTimeString();
@@ -289,7 +289,7 @@ namespace CoinSpotUpdater
             WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
             WriteColored(() => { 
                 Console.Write($"TOTAL: ");
-                WriteLine($"{balances.GetTotal():C} AUD");
+                WriteLine($"{balances.GetTotal():C}");
             }, ConsoleColor.Cyan);
         }
 
@@ -311,7 +311,7 @@ namespace CoinSpotUpdater
         {
             var prefix = "/api/ro/";
             var url = input.Substring(5);
-            WriteLine(_coinspotService.ApiCall(prefix + url, "{}"));
+            WriteLine(_coinspotService.PrivateApiCall(prefix + url, "{}"));
         }
     }
 }

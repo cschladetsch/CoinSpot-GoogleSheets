@@ -8,6 +8,11 @@ namespace CoinSpotUpdater.CoinSpot.Dto
         public string status;
         public List<Dictionary<string, CoinSpotHolding>> balances;
 
+        private readonly string _myCurrency;
+
+        public CoinSpotBalances()
+            => _myCurrency = CoinspotService.FromAppSettings("myCurrency");
+
         public float GetTotal()
         {
             var total = 0.0f;
@@ -15,7 +20,7 @@ namespace CoinSpotUpdater.CoinSpot.Dto
             {
                 foreach (var hold in holding)
                 {
-                    if (hold.Key != "AUD")
+                    if (hold.Key != _myCurrency)
                     {
                         total += hold.Value.audbalance;
                     }
@@ -32,7 +37,7 @@ namespace CoinSpotUpdater.CoinSpot.Dto
                 foreach (var kv in holding)
                 {
                     var h = kv.Value;
-                    sb.AppendLine($"{kv.Key,5}: {h.balance,8:0.######} × {h.rate,10:C} = {h.audbalance:C} AUD");
+                    sb.AppendLine($"{kv.Key,5}: {h.balance,8:0.######} × {h.rate,10:C} = {h.audbalance:C}");
                 }
             }
             return sb.ToString();
