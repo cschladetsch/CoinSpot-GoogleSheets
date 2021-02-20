@@ -4,15 +4,17 @@
 
 Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
 
-This simple console application reads values from your *CoinSpot* account, and writes the total values of your holdings to a *GoogleSheet* spread sheet.
+This simple console application reads private date from your *CoinSpot* account, and writes to your private *GoogleSheet* spread sheet.
 
 Of course you will need to supply your own API keys and secrets for the APIs used.
 
 It's faster to type 'g' or 'b' into the console of this app, rather than opening a new tab, logging in, and checking things.
 
-This app will also automatically update fields in a Google Sheet of yours, if you like that sort of  thing. This requires extra setup of course, but it's not hard.
+This app will also automatically update fields in a Google Sheet of yours, if you like that sort of thing. This requires extra setup of course, but it's not hard.
 
-Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish.
+Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish. For instance, you could add logic to add/remove buy/sell orders according to market moves, rather than having to monitor it all yourself.
+
+You can think of this as a meta-automation for handling your crypto accounts. 
 
 *Note*: Balances will **not** include your unused account funds on CoinSpot. This is intentional. The same is true for 'total spent', though I'll need fully automate this. This is all a bit more complicated than I first suspected.
 
@@ -32,7 +34,7 @@ NOTE: I don't update the image with every change the app, so it may differ from 
 ## Setup
 Most configuration is stored in `App.config`. Start with `App.config.example` and rename it to `App.config`. Add all the required keys and secrets.
 
-You will need a CoinSpot account. The default is CoinSpot Australia.
+You will need a CoinSpot account. The default is CoinSpot Australia. Change the currency used to your locale. The default is _AUD_.
 
 You will also need a Google account and at least on Google Sheet if you wish to use the auto-update methods. You can use the app without this of course.
 
