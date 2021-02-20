@@ -5,6 +5,7 @@
         <add key="coinSpotSecret" value="" />
         <add key="coinSpotSite" value="https://www.coinspot.com.au"/>
         <add key="spreadSheetId" value=""/>
+        <add key="updateTimerMinutes" value="0"/>
     </appSettings>
     <startup> 
         <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />

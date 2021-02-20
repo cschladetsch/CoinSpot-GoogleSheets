@@ -53,7 +53,7 @@ It's a simple console application, which starts by printing the help screen.
 Follow the dots.
 
 ## Automatic Updating
-In the `App.Config` file, you can change the `updateTimerPeriod` setting to automatically update your spreadsheet every N seconds.
+In the `App.Config` file, you can change the `updateTimerMinutes` setting to automatically update your spreadsheet every N seconds. If this is 0, no auto-updates will be made.
 
 ### Using a Raspberry Pi
 You don't want to keep your desktop on 24/7 just to write updates to your spreadsheet. But if you have a Raspberry Pi, you can use that to send updates at a very low power consumption that costs a few cents/day in power to run.
@@ -63,9 +63,11 @@ You don't want to keep your desktop on 24/7 just to write updates to your spread
 * set your real locale with `sudo dpkg-reconfigure tzdata`
 * Install [mono](https://linuxize.com/post/how-to-install-mono-on-ubuntu-18-04/) on the pi
 * Use `scp -rp [src] [dest]` to copy the files to the pi. You need to copy recursively as there are sub-folders for the token
-* See `update-pi` scrtip for example
-* Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions
+  * See `update-pi` script for example
+  * _Note_ that you will need the target folder to exist on the pi
+* Use [screen](https://linuxize.com/post/how-to-use-linux-screen/) to be able to make detachable sessions. Run `screen`
 * Start a new *screen* session with \^A\^C
+* Change the _updateTimerPeriod_ element in App.Config to set the number of minute between updates. The default is zero
 * Run *CoinSpotUpdater.exe*
 * Detach the process with \^A\^D
 

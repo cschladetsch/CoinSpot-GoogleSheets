@@ -49,7 +49,7 @@ namespace CoinSpotUpdater
 
         private void PrepareUpdateTimer()
         {
-            var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerPeriod"));
+            var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerMinutes"));
             if (minutes > 0)
             {
                 WriteLine($"Update timer set for {minutes} minutes");
