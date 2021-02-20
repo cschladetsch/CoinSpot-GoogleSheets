@@ -257,7 +257,7 @@ namespace CoinSpotUpdater
             {
                 now.ToString("dd MMM yy"),
                 time,
-                SpentSourceRange,
+                "=" + SpentSourceRange,
                 value,
             };
 
