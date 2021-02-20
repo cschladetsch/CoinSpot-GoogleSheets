@@ -6,6 +6,7 @@
         <add key="coinSpotSite" value="https://www.coinspot.com.au"/>
         <add key="spreadSheetId" value=""/>
         <add key="updateTimerMinutes" value="0"/>
+        <add key="myCurrency" value="AUD"/>
     </appSettings>
     <startup> 
         <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
