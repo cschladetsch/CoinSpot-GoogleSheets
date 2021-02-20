@@ -4,15 +4,13 @@
 
 Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
 
-This is basically a CoinSpot/GoogleSheets bridge-application.
+This is basically a _CoinSpot/GoogleSheet_ bridge-application. With optional automatic updates to track real gains over time - without including the cost of the coins you purchased.
 
-This simple console application reads private date from your *CoinSpot* account, and writes to your private *GoogleSheet* spread sheet.
+This simple console application reads private data from your *CoinSpot* account, and writes to your private *GoogleSheet* spread sheet.
 
 Of course you will need to supply your own API keys and secrets for the APIs used.
 
 It's faster to type 'g' or 'b' into the console of this app, rather than opening a new tab, logging in, and checking things.
-
-This app will also automatically update fields in a Google Sheet of yours, if you like that sort of thing. This requires extra setup of course, but it's not hard.
 
 Most people that invest in crypto-currencies have their own spreadsheets. This app will give you basic use cases, and also provide a basis for more elaborate automation if you wish. For instance, you could add logic to add/remove buy/sell orders according to market moves, rather than having to monitor it all yourself.
 
@@ -20,7 +18,8 @@ You can think of this as a meta-automation for handling your crypto accounts.
 
 *Note*: Balances will **not** include your unused account funds on CoinSpot. This is intentional. The same is true for 'total spent', though I'll need fully automate this. This is all a bit more complicated than I first suspected.
 
-## Example Screenshot
+## Example Session
+
 This is using an alt account setup, but shows the basics of what you can expect.
 
 Note that when you use the 'up' command, if you have the Spreadsheet open in a browser window, it will instantly update as well.
