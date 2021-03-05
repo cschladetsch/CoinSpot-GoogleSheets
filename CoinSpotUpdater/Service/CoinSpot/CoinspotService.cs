@@ -67,12 +67,6 @@ namespace CoinSpotUpdater.CoinSpot
 
         public string PrivateApiCall(string endPoint, string jsonParameters)
         {
-            if (_stopWatch.ElapsedMilliseconds < 1000)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-            _stopWatch.Reset();
-
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             var json = jsonParameters.Replace(" ", "");
@@ -90,6 +84,15 @@ namespace CoinSpotUpdater.CoinSpot
             return MakeCall(parameterBytes, request);
         }
 
+        private void WaitForCoinSpotApi()
+        {
+            if (_stopWatch.ElapsedMilliseconds < 1000)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+            _stopWatch.Reset();
+        }
+
         private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
             => PrivateApiCall(endPointUrl, JSONParameters);
 
@@ -105,8 +108,10 @@ namespace CoinSpotUpdater.CoinSpot
             return request;
         }
 
-        private static string MakeCall(byte[] parameterBytes, HttpWebRequest request)
+        private string MakeCall(byte[] parameterBytes, HttpWebRequest request)
         {
+            WaitForCoinSpotApi();
+
             string responseText;
             try
             {
