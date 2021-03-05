@@ -7,6 +7,7 @@ using System.Configuration;
 
 using Newtonsoft.Json;
 using CoinSpotUpdater.CoinSpot.Dto;
+using System.Diagnostics;
 
 namespace CoinSpotUpdater.CoinSpot
 {
@@ -17,12 +18,14 @@ namespace CoinSpotUpdater.CoinSpot
         private readonly string _secret;
         private readonly string _baseUrl;
         private const string _baseReadOnlyUrl = "/api/ro/my/";
+        private Stopwatch _stopWatch;
 
         public CoinspotService()
         {
             _key = FromAppSettings("coinSpotKey");
             _secret = FromAppSettings("coinSpotSecret");
             _baseUrl = FromAppSettings("coinSpotSite");
+            _stopWatch = new Stopwatch();
         }
 
         public static string FromAppSettings(string key)
@@ -64,6 +67,12 @@ namespace CoinSpotUpdater.CoinSpot
 
         public string PrivateApiCall(string endPoint, string jsonParameters)
         {
+            if (_stopWatch.ElapsedMilliseconds < 1000)
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+            _stopWatch.Reset();
+
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
             var json = jsonParameters.Replace(" ", "");

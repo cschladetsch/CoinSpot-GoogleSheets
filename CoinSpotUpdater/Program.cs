@@ -18,7 +18,6 @@ namespace CoinSpotUpdater
         private const string SummaryRange = "Summary!G5:G8";
         private const string TotalValueRange = "Summary!G6";
         private const string UpdateDateRange = "Summary!G4";
-        private const string SpentRange = "Summary!G5";
         private const string UpdateTimeRange = "Summary!H4";
         private const string ValueTable = "Table!B2";
         private const string GainsTable = "Table!G2";
@@ -214,8 +213,7 @@ namespace CoinSpotUpdater
 
         private void ShowGainPercent()
         {
-            var entries = _googleSheetsService.GetRange(SpentRange);
-            float spent = float.Parse(entries[0][0].ToString().Substring(1));
+            float spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
             float value = _coinspotService.GetPortfolioValue();
             float gainDollar = value - spent;
             float gainPercent = 100.0f*gainDollar/spent;
