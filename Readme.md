@@ -59,7 +59,7 @@ It's a simple console application, which starts by printing the help screen.
 Follow the dots.
 
 ## Automatic Updating
-In the `App.Config` file, you can change the `updateTimerMinutes` setting to automatically update your spreadsheet every N seconds. If this is 0, no auto-updates will be made.
+In the `App.Config` file, you can change the `updateTimerMinutes` setting to automatically update your spreadsheet every N minutes. If this is 0, no auto-updates will be made.
 
 ### Using a Raspberry Pi
 
