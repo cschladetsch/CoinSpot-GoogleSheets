@@ -28,6 +28,7 @@ namespace CoinSpotUpdater
         private CoinspotService _coinspotService;
         private GoogleSheetsService _googleSheetsService;
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
+        private Timer _timer;
 
         static void Main(string[] args)
         {
@@ -53,7 +54,7 @@ namespace CoinSpotUpdater
             if (minutes > 0)
             {
                 WriteLine($"Update timer set for {minutes} minutes");
-                new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
+                _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
             }
         }
 
