@@ -22,7 +22,7 @@ You can think of this as a meta-automation for handling your crypto accounts.
 
 This is using an alt account setup, but shows the basics of what you can expect.
 
-Note that when you use the 'up' command, if you have the Spreadsheet open in a browser window, it will instantly update as well.
+Note that when you use the 'u' command, if you have the Spreadsheet open in a browser window, it will instantly update as well.
 
 You can use this framework to connect your inputs from CoinSpot to your outputs/analysis in Google Sheets.
 
@@ -37,13 +37,15 @@ Most configuration is stored in `App.config`. Start with `App.config.example` an
 
 You will need a CoinSpot account. The default is CoinSpot Australia. Change the currency used to your locale. The default is _AUD_.
 
-You will also need a Google account and at least on Google Sheet if you wish to use the auto-update methods. You can use the app without this of course.
+You will also need a Google account and at least one Google Sheet if you wish to use the auto-update methods. You can use the app without this of course.
 
 ## External references
 These are the required references:
 
-* Google Api. Install via nuget
-* Google Sheets v4. Install via nuget package console `code example. Install via nuget package console `code example
+* Google Api.
+* Google Sheets v4. 
+
+These should automatically install via the file `packages.config` in the Solution folder.
 
 ## CoinSpot API
 Login to CoinSpot and get an API key and secret. Add them to `App.config`.
@@ -65,7 +67,7 @@ You don't want to keep your desktop on 24/7 just to write updates to your spread
 
 #### Making it easier to login to your _pi_
 
-Append the contents of your `~/.ssh/rsa_pub.rsa` file to the `~/.ssh/known_hosts`  file on your pi.
+Append the contents of your `~/.ssh/rsa_pub.rsa` file to the `~/.ssh/known_hosts` file on your pi.
 
 Then you can use `ssh pi@yourpiname` to quickly get into your _pi_ without having to type your password.
 
