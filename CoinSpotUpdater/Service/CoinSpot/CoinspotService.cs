@@ -84,15 +84,6 @@ namespace CoinSpotUpdater.CoinSpot
             return MakeCall(parameterBytes, request);
         }
 
-        private void WaitForCoinSpotApi()
-        {
-            if (_stopWatch.ElapsedMilliseconds < 1000)
-            {
-                System.Threading.Thread.Sleep(1000);
-            }
-            _stopWatch.Reset();
-        }
-
         private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
             => PrivateApiCall(endPointUrl, JSONParameters);
 
@@ -127,7 +118,7 @@ namespace CoinSpotUpdater.CoinSpot
             }
             catch (Exception ex)
             {
-                responseText = "{\"exception\"" + ":\"" + ex.ToString() + "\"}";
+                responseText = ex.Message;
             }
 
             return responseText;
@@ -142,6 +133,15 @@ namespace CoinSpotUpdater.CoinSpot
                 sb.Append(encodedBytes[i].ToString("X2"));
             }
             return sb.ToString();
+        }
+
+        private void WaitForCoinSpotApi()
+        {
+            if (_stopWatch.ElapsedMilliseconds < 1000)
+            {
+                System.Threading.Thread.Sleep((int)(1000L - _stopWatch.ElapsedMilliseconds + 10));
+            }
+            _stopWatch.Reset();
         }
     }
 }
