@@ -15,7 +15,6 @@ namespace CoinSpotUpdater
         //      1. Summary. Shows a summary of all spent and holdings
         //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
         //      4. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
-        private const string SummaryRange = "Summary!G5:G8";
         private const string TotalValueRange = "Summary!G6";
         private const string UpdateDateRange = "Summary!G4";
         private const string UpdateTimeRange = "Summary!H4";
@@ -23,11 +22,11 @@ namespace CoinSpotUpdater
         private const string GainsTable = "Table!G2";
         private const string SpentSourceRange = "Spent!G1";
 
-        private bool _quit;
-        private CoinspotService _coinspotService;
-        private GoogleSheetsService _googleSheetsService;
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
+        private GoogleSheetsService _googleSheetsService;
+        private CoinspotService _coinspotService;
         private Timer _timer;
+        private bool _quit;
 
         static void Main(string[] args)
         {
@@ -144,19 +143,18 @@ namespace CoinSpotUpdater
 
         private void AddActions()
         {
-            AddAction("g", "Show total gains as a percent of spent", ShowGainPercent);
-            AddAction("s", "Show summary status of all holdings", ShowStatus);
+            AddAction("s", "Summary status of all holdings", ShowStatus);
             AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
-            AddAction("b", "Show balances of all coins", ShowBalances);
+            AddAction("b", "Balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
-            AddAction("a", "Show balances and summary", ShowAll);
+            AddAction("a", "Balances and summary", ShowAll);
             AddAction("l", "Get all Prices", ShowAllPrices);
-            AddAction("d", "Show Total Deposits", ShowAllDeposits);
-            AddAction("dt", "Show Deposits", ShowDeposits);
-            AddAction("buy", "Show Buy Orders", ShowBuyOrders);
-            AddAction("sell", "Show Sell Orders", ShowSellOrders);
-            AddAction("tr", "Show Transactions", ShowTransactions);
-            AddAction("?", "Show help", ShowHelp);
+            AddAction("d", "Total Deposits", ShowAllDeposits);
+            AddAction("dt", "Deposits", ShowDeposits);
+            AddAction("buy", "Buy Orders", ShowBuyOrders);
+            AddAction("sell", "Sell Orders", ShowSellOrders);
+            AddAction("tr", "Transactions", ShowTransactions);
+            AddAction("?", "help", ShowHelp);
         }
 
         private void ShowSellOrders()
@@ -209,18 +207,6 @@ namespace CoinSpotUpdater
                 WriteLine($"{cmd.Description}");
                 Console.ForegroundColor = color;
             }
-        }
-
-        private void ShowGainPercent()
-        {
-            float spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
-            float value = _coinspotService.GetPortfolioValue();
-            float gainDollar = value - spent;
-            float gainPercent = 100.0f*gainDollar/spent;
-            WriteLine($"Spent:   {spent:C}");
-            WriteLine($"Value:   {value:C}");
-            WriteLine($"Gain:    {gainDollar:C}");
-            WriteLine($"Percent: {gainPercent:00.00}%");
         }
 
         private void UpdateGoogleSpreadSheet()
@@ -294,11 +280,10 @@ namespace CoinSpotUpdater
 
         private void ShowStatus()
         {
-            var entries = _googleSheetsService.GetRange(SummaryRange);
-            var spent = entries[0][0];
-            var value = entries[1][0];
-            var gain = entries[2][0];
-            var gainPercent = entries[3][0];
+            var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
+            var value = _coinspotService.GetPortfolioValue();
+            var gain = value - spent;
+            var gainPercent = (value/spent - 1.0f)*100.0f;
 
             WriteLine($"Spent = {spent:C}");
             WriteLine($"Value = {value:C}");
