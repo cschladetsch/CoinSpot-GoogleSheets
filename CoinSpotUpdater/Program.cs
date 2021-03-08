@@ -44,6 +44,7 @@ namespace CoinSpotUpdater
             ShowHelp();
 
             WriteLine();
+            ShowStatus();
         }
 
         private void PrepareUpdateTimer()
@@ -124,7 +125,7 @@ namespace CoinSpotUpdater
 
         private void WriteDateTime()
         {
-            WriteColored(() => WriteLine(DateTime.Now), ConsoleColor.Magenta);
+            WriteColored(() => WriteLine(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
         }
 
         private void WritePrompt()
