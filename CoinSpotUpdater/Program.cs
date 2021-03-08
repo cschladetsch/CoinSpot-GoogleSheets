@@ -144,6 +144,7 @@ namespace CoinSpotUpdater
         private void AddActions()
         {
             AddAction("s", "Summary status of all holdings", ShowStatus);
+            AddAction("g", "Show gain percent", ShowGainPercent);
             AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             AddAction("b", "Balances of all coins", ShowBalances);
             AddAction("q", "Quit", () => _quit = true);
@@ -155,6 +156,15 @@ namespace CoinSpotUpdater
             AddAction("sell", "Sell Orders", ShowSellOrders);
             AddAction("tr", "Transactions", ShowTransactions);
             AddAction("?", "help", ShowHelp);
+        }
+
+        private void ShowGainPercent()
+        {
+            var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
+            var value = _coinspotService.GetPortfolioValue();
+            var gain = value - spent;
+            var gainPercent = (value/spent - 1.0f)*100.0f;
+            WriteColored(() => WriteLine($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
         private void ShowSellOrders()
