@@ -12,7 +12,7 @@ using System.Diagnostics;
 namespace CoinSpotUpdater.CoinSpot
 {
     // see https://www.coinspot.com.au/api for full api
-    class CoinspotService
+    public class CoinspotService
     {
         private readonly string _key;
         private readonly string _secret;
@@ -43,13 +43,13 @@ namespace CoinSpotUpdater.CoinSpot
         public string GetCoinBalanceJson(string coinType)
             => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
-        internal CoinSpotAllPrices GetAllPrices()
+        public CoinSpotAllPrices GetAllPrices()
             => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
 
-        internal CoinSpotTransactions GetAllTransactions()
+        public CoinSpotTransactions GetAllTransactions()
             => JsonConvert.DeserializeObject<CoinSpotTransactions>(PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
 
-        internal CoinSpotDeposits GetAllDeposits()
+        public CoinSpotDeposits GetAllDeposits()
             => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
         public string PrivateApiCall(string endPoint)

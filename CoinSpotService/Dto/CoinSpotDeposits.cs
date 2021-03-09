@@ -5,7 +5,7 @@ using System.Text;
 namespace CoinSpotUpdater.CoinSpot.Dto
 {
     #pragma warning disable 649
-    class CoinSpotDeposits
+    public class CoinSpotDeposits
     {
         public string status;
         public List<CoinSpotDeposit> deposits;
