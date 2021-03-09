@@ -10,11 +10,11 @@ namespace CoinSpotUpdater
 {
     class Program
     {
-        // you may want to change these to match your local setup
-        // basically, I have three Sheets:
+        // You will want to change these to match your local setup:
+        // I have three main Sheets:
         //      1. Summary. Shows a summary of all spent and holdings
         //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
-        //      4. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
+        //      3. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
         private const string TotalValueRange = "Summary!G6";
         private const string UpdateDateRange = "Summary!G4";
         private const string UpdateTimeRange = "Summary!H4";
@@ -138,8 +138,14 @@ namespace CoinSpotUpdater
         {
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
-            action();
-            Console.ForegroundColor = currentColor;
+            try
+            {
+                action();
+            }
+            finally
+            {
+                Console.ForegroundColor = currentColor;
+            }
         }
 
         private void AddActions()
@@ -148,14 +154,14 @@ namespace CoinSpotUpdater
             AddAction("g", "Show gain percent", ShowGainPercent);
             AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
             AddAction("b", "Balances of all coins", ShowBalances);
-            AddAction("q", "Quit", () => _quit = true);
             AddAction("a", "Balances and summary", ShowAll);
-            AddAction("l", "Get all Prices", ShowAllPrices);
-            AddAction("d", "Total Deposits", ShowAllDeposits);
-            AddAction("dt", "Deposits", ShowDeposits);
+            AddAction("p", "Get all Prices", ShowAllPrices);
+            AddAction("td", "Total Deposits", ShowAllDeposits);
+            AddAction("d", "Deposits", ShowDeposits);
             AddAction("buy", "Buy Orders", ShowBuyOrders);
             AddAction("sell", "Sell Orders", ShowSellOrders);
             AddAction("tr", "Transactions", ShowTransactions);
+            AddAction("q", "Quit", () => _quit = true);
             AddAction("?", "help", ShowHelp);
         }
 
@@ -164,41 +170,33 @@ namespace CoinSpotUpdater
             var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
-            var gainPercent = (value/spent - 1.0f)*100.0f;
+            var gainPercent = (value / spent - 1.0f) * 100.0f;
             WriteColored(() => WriteLine($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
         private void ShowSellOrders()
-            => WriteLine(_coinspotService.GetAllTransactions().SellOrdersToString());
+            => WriteLine(GetAllTransactions().SellOrdersToString());
+
+        private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
+            => _coinspotService.GetAllTransactions();
 
         private void ShowBuyOrders()
-            => WriteLine(_coinspotService.GetAllTransactions().BuyOrdersToString());
+            => WriteLine(GetAllTransactions().BuyOrdersToString());
 
         private void ShowTransactions()
-            => WriteLine(_coinspotService.GetAllTransactions());
+            => WriteLine(GetAllTransactions());
 
         private void ShowDeposits()
-        {
-            var result = _coinspotService.GetAllDeposits();
-            WriteLine(result);
-        }
+            => WriteLine(_coinspotService.GetAllDeposits());
 
         private void ShowAllDeposits()
-        {
-            var result = _coinspotService.GetAllDeposits();
-            WriteLine($"Total deposited: {result.GetTotalDeposited()}");
-        }
+            => WriteLine($"Total deposited: {_coinspotService.GetAllDeposits().GetTotalDeposited()}");
 
         private void ShowAllPrices()
-        {
-            var result = _coinspotService.GetAllPrices();
-            WriteLine(result);
-        }
+            => WriteLine(_coinspotService.GetAllPrices());
 
         private void AddAction(string text, string desciption, Action action)
-        {
-            _commands[text] = new Command(text, desciption, action);
-        }
+            => _commands[text] = new Command(text, desciption, action);
 
         private void ShowAll()
         {
@@ -283,7 +281,8 @@ namespace CoinSpotUpdater
         {
             var balances = _coinspotService.GetMyBalances();
             WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
-            WriteColored(() => { 
+            WriteColored(() =>
+            {
                 Console.Write($"TOTAL: ");
                 WriteLine($"{balances.GetTotal():C}");
             }, ConsoleColor.Cyan);
@@ -294,7 +293,7 @@ namespace CoinSpotUpdater
             var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
-            var gainPercent = (value/spent - 1.0f)*100.0f;
+            var gainPercent = (value / spent - 1.0f) * 100.0f;
 
             WriteLine($"Spent = {spent:C}");
             WriteLine($"Value = {value:C}");
