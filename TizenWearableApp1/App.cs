@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace TizenWearableApp1
@@ -39,11 +40,11 @@ namespace TizenWearableApp1
             Start();
         }
 
-        private async void Start()
+        private void Start()
         {
             _label.Text = "Reading...";
-            var bal = await _coinSpotService.GetPortfolioValue();
-            _label.Text = $"{bal} AUD";
+            var bal = _coinSpotService.GetPortfolioValue();
+            _label.Text = $"{bal}";
         }
 
         protected override void OnSleep()

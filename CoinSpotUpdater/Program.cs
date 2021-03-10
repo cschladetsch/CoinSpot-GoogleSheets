@@ -168,21 +168,21 @@ namespace CoinSpotUpdater
 
         private async void ShowGainPercent()
         {
-            var spent = (await _coinspotService.GetAllDeposits()).GetTotalDeposited();
-            var value = await _coinspotService.GetPortfolioValue();
+            var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
+            var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
             var gainPercent = (value / spent - 1.0f) * 100.0f;
             WriteColored(() => WriteLine($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
-        private async void ShowSellOrders()
-            => WriteLine((await GetAllTransactions()).SellOrdersToString());
+        private void ShowSellOrders()
+            => WriteLine(GetAllTransactions().SellOrdersToString());
 
-        private async Task<CoinSpot.Dto.CoinSpotTransactions> GetAllTransactions()
-            => await _coinspotService.GetAllTransactions();
+        private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
+            => _coinspotService.GetAllTransactions();
 
-        private async void ShowBuyOrders()
-            => WriteLine((await GetAllTransactions()).BuyOrdersToString());
+        private void ShowBuyOrders()
+            => WriteLine(GetAllTransactions().BuyOrdersToString());
 
         private void ShowTransactions()
             => WriteLine(GetAllTransactions());
@@ -190,8 +190,8 @@ namespace CoinSpotUpdater
         private void ShowDeposits()
             => WriteLine(_coinspotService.GetAllDeposits());
 
-        private async void ShowAllDeposits()
-            => WriteLine($"Total deposited: {(await _coinspotService.GetAllDeposits()).GetTotalDeposited()}");
+        private void ShowAllDeposits()
+            => WriteLine($"Total deposited: {_coinspotService.GetAllDeposits().GetTotalDeposited()}");
 
         private void ShowAllPrices()
             => WriteLine(_coinspotService.GetAllPrices());
@@ -223,7 +223,7 @@ namespace CoinSpotUpdater
         {
             try
             {
-                var value = await _coinspotService.GetPortfolioValue();
+                var value = _coinspotService.GetPortfolioValue();
                 var now = DateTime.Now;
                 var date = now.ToString("dd MMM yy");
                 var time = now.ToLongTimeString();
@@ -278,9 +278,9 @@ namespace CoinSpotUpdater
             _googleSheetsService.Append(GainsTable, list);
         }
 
-        private async void ShowBalances()
+        private void ShowBalances()
         {
-            var balances = await _coinspotService.GetMyBalances();
+            var balances = _coinspotService.GetMyBalances();
             WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
             WriteColored(() =>
             {
@@ -289,10 +289,10 @@ namespace CoinSpotUpdater
             }, ConsoleColor.Cyan);
         }
 
-        private async void ShowStatus()
+        private void ShowStatus()
         {
-            var spent = await _coinspotService.GetAllDeposits();
-            var value = await _coinspotService.GetPortfolioValue();
+            var spent = _coinspotService.GetAllDeposits();
+            var value = _coinspotService.GetPortfolioValue();
             var total = spent.GetTotalDeposited();
             var gain = value - spent.GetTotalDeposited();
             var gainPercent = (value / total - 1.0f) * 100.0f;

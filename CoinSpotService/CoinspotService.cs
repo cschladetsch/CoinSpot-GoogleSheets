@@ -40,29 +40,29 @@ namespace CoinSpotUpdater.CoinSpot
         public static string FromAppSettings(string key)
             => ConfigurationManager.AppSettings.Get(key);
 
-        public async Task<float> GetPortfolioValue()
-            => (await GetMyBalances()).GetTotal();
+        public float GetPortfolioValue()
+            => GetMyBalances().GetTotal();
 
-        public async Task<CoinSpotBalances> GetMyBalances()
-            => JsonConvert.DeserializeObject<CoinSpotBalances>(await GetMyBalancesJson());
+        public CoinSpotBalances GetMyBalances()
+            => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
 
-        public async Task<string> GetMyBalancesJson(string JSONParameters = "{}")
-            => await PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
+        public string GetMyBalancesJson(string JSONParameters = "{}")
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
-        public async Task<string> GetCoinBalanceJson(string coinType)
-            => await PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
+        public string GetCoinBalanceJson(string coinType)
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
         public CoinSpotAllPrices GetAllPrices()
             => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
 
-        public async Task<CoinSpotTransactions> GetAllTransactions()
-            => JsonConvert.DeserializeObject<CoinSpotTransactions>(await PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
+        public CoinSpotTransactions GetAllTransactions()
+            => JsonConvert.DeserializeObject<CoinSpotTransactions>(PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
 
-        public async Task<CoinSpotDeposits> GetAllDeposits()
-            => JsonConvert.DeserializeObject<CoinSpotDeposits>(await PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
+        public CoinSpotDeposits GetAllDeposits()
+            => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
-        public async Task<string> PrivateApiCall(string endPoint)
-            => await PrivateApiCall(endPoint, "{}");
+        public string PrivateApiCall(string endPoint)
+            => PrivateApiCall(endPoint, "{}");
 
         public string PublicApiCall(string url)
         {
@@ -74,7 +74,7 @@ namespace CoinSpotUpdater.CoinSpot
             }
         }
 
-        public async Task<string> PrivateApiCall(string endPoint, string jsonParameters)
+        public string PrivateApiCall(string endPoint, string jsonParameters)
         {
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -90,11 +90,11 @@ namespace CoinSpotUpdater.CoinSpot
             var signedData = SignData(parameterBytes);
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
 
-            return await MakeCall(parameterBytes, request);
+            return MakeCall(parameterBytes, request);
         }
 
-        private async Task<string> PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
-            => await PrivateApiCall(endPointUrl, JSONParameters);
+        private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
+            => PrivateApiCall(endPointUrl, JSONParameters);
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
         {
@@ -108,19 +108,19 @@ namespace CoinSpotUpdater.CoinSpot
             return request;
         }
 
-        private async Task<string> MakeCall(byte[] parameterBytes, HttpWebRequest request)
+        private string MakeCall(byte[] parameterBytes, HttpWebRequest request)
         {
             WaitForCoinSpotApi();
 
             string responseText;
             try
             {
-                using (var stream = await request.GetRequestStreamAsync())
+                using (var stream = request.GetRequestStream())
                 {
                     stream.Write(parameterBytes, 0, parameterBytes.Length);
                     stream.Close();
                 }
-                var response = await request.GetResponseAsync();
+                var response = request.GetResponse();
                 using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     responseText = reader.ReadToEnd();
