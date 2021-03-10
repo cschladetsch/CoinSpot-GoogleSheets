@@ -52,7 +52,7 @@ namespace CoinSpotUpdater
             var minutes = int.Parse(ConfigurationManager.AppSettings.Get("updateTimerMinutes"));
             if (minutes > 0)
             {
-                WriteLine($"Update timer set for {minutes} minutes");
+                Line($"Update timer set for {minutes} minutes");
                 _timer = new Timer(TimerCallback, null, TimeSpan.FromMilliseconds(0), TimeSpan.FromMinutes(minutes));
             }
         }
@@ -62,7 +62,7 @@ namespace CoinSpotUpdater
             GC.Collect();
             GC.WaitForPendingFinalizers();
             WriteLine();
-            WriteLine("\nAuto-update:");
+            Line("\nAuto-update:");
             WriteDateTime();
             UpdateGoogleSpreadSheet();
             WritePrompt();
@@ -71,14 +71,14 @@ namespace CoinSpotUpdater
         private static void PrintHeader()
         {
             Console.ForegroundColor = ConsoleColor.Gray;
-            WriteLine($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            Line($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
             WriteLine();
         }
 
         private static void WriteLine()
             => Console.WriteLine();
 
-        private static void WriteLine(object text)
+        private static void Line(object text)
             => Console.WriteLine(text);
 
         private void Run(string[] args)
@@ -89,7 +89,7 @@ namespace CoinSpotUpdater
             }
             catch (Exception e)
             {
-                WriteLine($"Error: {e.Message}");
+                Line($"Error: {e.Message}");
                 Repl();
             }
         }
@@ -105,36 +105,30 @@ namespace CoinSpotUpdater
                     continue;
                 }
 
-                if (input.StartsWith("call"))
-                {
-                    CallCoinSpot(input);
-                    continue;
-                }
-
                 if (_commands.TryGetValue(input, out Command cmd))
                 {
                     WriteDateTime();
-                    WriteColored(_commands[input].Action, ConsoleColor.Yellow);
+                    Colored(_commands[input].Action, ConsoleColor.Yellow);
                 }
                 else
                 {
-                    WriteColored(() => WriteLine("Type '?' for a list of commands."), ConsoleColor.Red);
+                    Colored(() => Line("Type '?' for a list of commands."), ConsoleColor.Red);
                 }
             }
         }
 
         private void WriteDateTime()
         {
-            WriteColored(() => WriteLine(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
+            Colored(() => Line(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
         }
 
         private void WritePrompt()
         {
-            WriteColored(() => Console.Write("# "), ConsoleColor.Green);
+            Colored(() => Console.Write("# "), ConsoleColor.Green);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private void WriteColored(Action action, ConsoleColor color)
+        private void Colored(Action action, ConsoleColor color)
         {
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
@@ -171,29 +165,29 @@ namespace CoinSpotUpdater
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
             var gainPercent = (value / spent - 1.0f) * 100.0f;
-            WriteColored(() => WriteLine($"Gain %{gainPercent}"), ConsoleColor.Yellow);
+            Colored(() => Line($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
         private void ShowSellOrders()
-            => WriteLine(GetAllTransactions().SellOrdersToString());
+            => Line(GetAllTransactions().SellOrdersToString());
+
+        private void ShowBuyOrders()
+            => Line(GetAllTransactions().BuyOrdersToString());
+
+        private void ShowTransactions()
+            => Line(GetAllTransactions());
+
+        private void ShowDeposits()
+            => Line(_coinspotService.GetAllDeposits());
+
+        private void ShowAllDeposits()
+            => Line($"Total deposited: {_coinspotService.GetAllDeposits().GetTotalDeposited()}");
+
+        private void ShowAllPrices()
+            => Line(_coinspotService.GetAllPrices());
 
         private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
             => _coinspotService.GetAllTransactions();
-
-        private void ShowBuyOrders()
-            => WriteLine(GetAllTransactions().BuyOrdersToString());
-
-        private void ShowTransactions()
-            => WriteLine(GetAllTransactions());
-
-        private void ShowDeposits()
-            => WriteLine(_coinspotService.GetAllDeposits());
-
-        private void ShowAllDeposits()
-            => WriteLine($"Total deposited: {_coinspotService.GetAllDeposits().GetTotalDeposited()}");
-
-        private void ShowAllPrices()
-            => WriteLine(_coinspotService.GetAllPrices());
 
         private void AddAction(string text, string desciption, Action action)
             => _commands[text] = new Command(text, desciption, action);
@@ -213,7 +207,7 @@ namespace CoinSpotUpdater
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.Write($"{cmd.Text,6}  ");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
-                WriteLine($"{cmd.Description}");
+                Line($"{cmd.Description}");
                 Console.ForegroundColor = color;
             }
         }
@@ -230,11 +224,11 @@ namespace CoinSpotUpdater
                 UpdateSummary(value, date, time);
                 UpdateTable(value, now, time);
 
-                WriteLine("Updated SpreadSheet");
+                Line("Updated SpreadSheet");
             }
             catch (Exception e)
             {
-                WriteColored(() => WriteLine($"Error updating: {e.Message}"), ConsoleColor.Red);
+                Colored(() => Line($"Error updating: {e.Message}"), ConsoleColor.Red);
             }
         }
 
@@ -280,11 +274,11 @@ namespace CoinSpotUpdater
         private void ShowBalances()
         {
             var balances = _coinspotService.GetMyBalances();
-            WriteColored(() => Console.Write(balances), ConsoleColor.Blue);
-            WriteColored(() =>
+            Colored(() => Console.Write(balances), ConsoleColor.Blue);
+            Colored(() =>
             {
                 Console.Write($"TOTAL: ");
-                WriteLine($"{balances.GetTotal():C}");
+                Line($"{balances.GetTotal():C}");
             }, ConsoleColor.Cyan);
         }
 
@@ -295,17 +289,10 @@ namespace CoinSpotUpdater
             var gain = value - spent;
             var gainPercent = (value / spent - 1.0f) * 100.0f;
 
-            WriteLine($"Spent = {spent:C}");
-            WriteLine($"Value = {value:C}");
-            WriteLine($"Gain$ = {gain:C}");
-            WriteLine($"Gain% = {gainPercent:0.##}");
-        }
-
-        private void CallCoinSpot(string input)
-        {
-            var prefix = "/api/ro/";
-            var url = input.Substring(5);
-            WriteLine(_coinspotService.PrivateApiCall(prefix + url, "{}"));
+            Line($"Spent = {spent:C}");
+            Line($"Value = {value:C}");
+            Line($"Gain$ = {gain:C}");
+            Line($"Gain% = {gainPercent:0.##}");
         }
     }
 }
