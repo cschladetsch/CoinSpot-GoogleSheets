@@ -8,6 +8,7 @@ using System.Configuration;
 using Newtonsoft.Json;
 using CoinSpotUpdater.CoinSpot.Dto;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace CoinSpotUpdater.CoinSpot
 {
@@ -17,7 +18,7 @@ namespace CoinSpotUpdater.CoinSpot
         private readonly string _key;
         private readonly string _secret;
         private readonly string _baseUrl;
-        private const string _baseReadOnlyUrl = "/api/ro/my/";
+        private readonly string _baseReadOnlyUrl = "/api/ro/my/";
         private Stopwatch _stopWatch;
 
         public CoinspotService()
@@ -28,32 +29,40 @@ namespace CoinSpotUpdater.CoinSpot
             _stopWatch = new Stopwatch();
         }
 
+        public CoinspotService(string key, string secret, string baseUrl)
+        {
+            _key = key;
+            _secret = secret;
+            _baseUrl = baseUrl;
+            _stopWatch = new Stopwatch();
+        }
+
         public static string FromAppSettings(string key)
             => ConfigurationManager.AppSettings.Get(key);
 
-        public float GetPortfolioValue()
-            => GetMyBalances().GetTotal();
+        public async Task<float> GetPortfolioValue()
+            => (await GetMyBalances()).GetTotal();
 
-        public CoinSpotBalances GetMyBalances()
-            => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
+        public async Task<CoinSpotBalances> GetMyBalances()
+            => JsonConvert.DeserializeObject<CoinSpotBalances>(await GetMyBalancesJson());
 
-        public string GetMyBalancesJson(string JSONParameters = "{}")
-            => PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
+        public async Task<string> GetMyBalancesJson(string JSONParameters = "{}")
+            => await PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
 
-        public string GetCoinBalanceJson(string coinType)
-            => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
+        public async Task<string> GetCoinBalanceJson(string coinType)
+            => await PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
         public CoinSpotAllPrices GetAllPrices()
             => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
 
-        public CoinSpotTransactions GetAllTransactions()
-            => JsonConvert.DeserializeObject<CoinSpotTransactions>(PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
+        public async Task<CoinSpotTransactions> GetAllTransactions()
+            => JsonConvert.DeserializeObject<CoinSpotTransactions>(await PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
 
-        public CoinSpotDeposits GetAllDeposits()
-            => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
+        public async Task<CoinSpotDeposits> GetAllDeposits()
+            => JsonConvert.DeserializeObject<CoinSpotDeposits>(await PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
-        public string PrivateApiCall(string endPoint)
-            => PrivateApiCall(endPoint, "{}");
+        public async Task<string> PrivateApiCall(string endPoint)
+            => await PrivateApiCall(endPoint, "{}");
 
         public string PublicApiCall(string url)
         {
@@ -65,7 +74,7 @@ namespace CoinSpotUpdater.CoinSpot
             }
         }
 
-        public string PrivateApiCall(string endPoint, string jsonParameters)
+        public async Task<string> PrivateApiCall(string endPoint, string jsonParameters)
         {
             var endpointURL = _baseUrl + endPoint;
             long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
@@ -81,11 +90,11 @@ namespace CoinSpotUpdater.CoinSpot
             var signedData = SignData(parameterBytes);
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
 
-            return MakeCall(parameterBytes, request);
+            return await MakeCall(parameterBytes, request);
         }
 
-        private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
-            => PrivateApiCall(endPointUrl, JSONParameters);
+        private async Task<string> PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
+            => await PrivateApiCall(endPointUrl, JSONParameters);
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
         {
@@ -99,19 +108,20 @@ namespace CoinSpotUpdater.CoinSpot
             return request;
         }
 
-        private string MakeCall(byte[] parameterBytes, HttpWebRequest request)
+        private async Task<string> MakeCall(byte[] parameterBytes, HttpWebRequest request)
         {
             WaitForCoinSpotApi();
 
             string responseText;
             try
             {
-                using (var stream = request.GetRequestStream())
+                using (var stream = await request.GetRequestStreamAsync())
                 {
                     stream.Write(parameterBytes, 0, parameterBytes.Length);
                     stream.Close();
                 }
-                using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
+                var response = await request.GetResponseAsync();
+                using (var reader = new StreamReader(response.GetResponseStream()))
                 {
                     responseText = reader.ReadToEnd();
                 }

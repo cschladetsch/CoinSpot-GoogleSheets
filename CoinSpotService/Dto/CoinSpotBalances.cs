@@ -22,7 +22,7 @@ namespace CoinSpotUpdater.CoinSpot.Dto
                 {
                     if (hold.Key != _myCurrency)
                     {
-                        total += hold.Value.audbalance;
+                        total += hold.Value.audBalance;
                     }
                 }
             }
@@ -37,7 +37,7 @@ namespace CoinSpotUpdater.CoinSpot.Dto
                 foreach (var kv in holding)
                 {
                     var h = kv.Value;
-                    sb.AppendLine($"{kv.Key,5}: {h.balance,8:0.######} × {h.rate,10:C} = {h.audbalance:C}");
+                    sb.AppendLine($"{kv.Key,5}: {h.balance,8:0.######} × {h.rate,10:C} = {h.audBalance:C}");
                 }
             }
             return sb.ToString();

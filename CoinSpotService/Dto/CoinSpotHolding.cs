@@ -3,7 +3,7 @@
     public class CoinSpotHolding
     {
         public float balance;
-        public float audbalance;
+        public float audBalance;
         public float rate;
     }
 }
