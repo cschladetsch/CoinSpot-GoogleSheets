@@ -189,9 +189,6 @@ namespace CoinSpotUpdater
         private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
             => _coinspotService.GetAllTransactions();
 
-        private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
-            => _coinspotService.GetAllTransactions();
-
         private void Action(string text, string desciption, Action action)
             => _commands[text] = new Command(text, desciption, action);
 
