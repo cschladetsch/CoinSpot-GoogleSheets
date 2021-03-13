@@ -87,14 +87,16 @@ namespace CoinSpotUpdater
 
         private void Run(string[] args)
         {
-            try
+            while (!_quit)
             {
-                Repl();
-            }
-            catch (Exception e)
-            {
-                Line($"Error: {e.Message}");
-                Repl();
+                try
+                {
+                    Repl();
+                }
+                catch (Exception e)
+                {
+                    Line($"Error: {e.Message}");
+                }
             }
         }
 
