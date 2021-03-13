@@ -287,7 +287,7 @@ namespace CoinSpotUpdater
         {
             var list = new List<object>
             {
-                now.ToString("ddd dd MMM yy HH:mm:ss"),
+                now.ToString("ddd MMM yy HH:mm:ss"),
                 GetTotalSpent(),
                 value,
             };
@@ -329,6 +329,9 @@ namespace CoinSpotUpdater
                 Line($"{balances.GetTotal():C}");
             }, ConsoleColor.Cyan);
         }
+        
+        private float _lastDollar;
+        private float _lastGainPercent;
 
         private void ShowStatus(string[] args)
         {
@@ -337,10 +340,25 @@ namespace CoinSpotUpdater
             var gain = value - spent;
             var gainPercent = (value / spent - 1.0f) * 100.0f;
 
+            if (_lastDollar == 0)
+            {
+                _lastDollar = value;
+                _lastGainPercent = gainPercent;
+            }
+
             Line($"Spent = {spent:C}");
             Line($"Value = {value:C}");
             Line($"Gain$ = {gain:C}");
-            Line($"Gain% = {gainPercent:0.##}");
+            Line($"Gain% = %{gainPercent:0.##}");
+
+            var diffDollar = value - _lastDollar;
+            var diffGain = gainPercent - _lastGainPercent;
+            ConsoleColor diffColor = diffDollar < 0 ? ConsoleColor.Red : ConsoleColor.Green;
+            Colored(() => Line($"  Diff$ = {value - _lastDollar:C}"), diffColor);
+            Colored(() => Line($"  Diff% = %{gainPercent - _lastGainPercent:0.##}"), diffColor);
+
+            _lastDollar = value;
+            _lastGainPercent = gainPercent;
         }
     }
 }
