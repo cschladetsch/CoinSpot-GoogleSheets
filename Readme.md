@@ -30,6 +30,8 @@ An example session using an alt account of mine:
 
 ![Sample Session](Resources/Demo.png)
 
+You will see that the app shows the difference in absolute value and gain percentage every time you query it.
+
 NOTE: I don't update the image with every change the app, so it may differ from what you see when you build it. Any drastic changes, I'll update the image.
 
 ## Setup
@@ -58,12 +60,23 @@ It's a simple console application, which starts by printing the help screen.
 
 Follow the dots.
 
+### Non-functional Systems
+The following items are implemented but are not functional:
+
+* Buy
+* Sell
+* Swap
+
+I have contacted *CoinSpot* about why I cannot use these API calls even with an elevated key/secret.
+
 ## Automatic Updating
 In the `App.Config` file, you can change the `updateTimerMinutes` setting to automatically update your spreadsheet every N minutes. If this is 0, no auto-updates will be made.
 
 ### Using a Raspberry Pi
 
 You don't want to keep your desktop on 24/7 just to write updates to your spreadsheet. But if you have a Raspberry Pi, you can use that to send updates at a very low power consumption that costs a few cents/day in power to run.
+
+*Note* You do NOT need a Pi to use this application. I provide this information for those that already have a pi and want to use it to automatically write updates without having to keep full power to a desktop machine.
 
 #### Making it easier to login to your _pi_
 
