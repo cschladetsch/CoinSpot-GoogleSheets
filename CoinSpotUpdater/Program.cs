@@ -15,12 +15,12 @@ namespace CoinSpotUpdater
         //      1. Summary. Shows a summary of all spent and holdings
         //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
         //      3. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
-        private const string TotalValueRange = "Summary!G6";
+        private const string SpentRange = "Summary!G5";
         private const string UpdateDateRange = "Summary!G4";
+        private const string TotalValueRange = "Summary!G6";
         private const string UpdateTimeRange = "Summary!H4";
         private const string ValueTable = "Table!B2";
-        private const string GainsTable = "Table!G2";
-        private const string SpentSourceRange = "Spent!G1";
+        private const string GainsTable = "Table!F2";
 
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private GoogleSheetsService _googleSheetsService;
@@ -151,7 +151,7 @@ namespace CoinSpotUpdater
             Action("a", "Balances and summary", ShowAll);
             Action("p", "Get all Prices", ShowAllPrices);
             Action("td", "Total Deposits", ShowAllDeposits);
-            Action("d", "Deposits", ShowDeposits);
+            Action("d", "Write Deposits", WriteDeposits);
             Action("buy", "Buy Orders", ShowBuyOrders);
             Action("sell", "Sell Orders", ShowSellOrders);
             Action("tr", "Transactions", ShowTransactions);
@@ -177,11 +177,24 @@ namespace CoinSpotUpdater
         private void ShowTransactions()
             => Line(GetAllTransactions());
 
-        private void ShowDeposits()
-            => Line(_coinspotService.GetAllDeposits());
+        private void WriteDeposits()
+        {
+            var deposits = _coinspotService.GetAllDeposits();
+            Line(deposits);
+            var items = new List<IList<object>>();
+            foreach (var deposit in deposits.deposits)
+            {
+                items.Add(new List<object>()
+                {
+                    deposit.created.ToString("dd MMMM yyyy HH:mm:ss").Replace(".", ""),
+                    deposit.amount
+                });
+            }
+            _googleSheetsService.Append("Spent!A1", items);
+        }
 
         private void ShowAllDeposits()
-            => Line($"Total deposited: {_coinspotService.GetAllDeposits().GetTotalDeposited()}");
+            => Line($"Total deposited: {GetTotalSpent()}");
 
         private void ShowAllPrices()
             => Line(_coinspotService.GetAllPrices());
@@ -234,41 +247,49 @@ namespace CoinSpotUpdater
 
         private void UpdateSummary(float value, string date, string time)
         {
+            _googleSheetsService.SetValue(SpentRange, GetTotalSpent());
             _googleSheetsService.SetValue(UpdateDateRange, date);
             _googleSheetsService.SetValue(UpdateTimeRange, time);
             _googleSheetsService.SetValue(TotalValueRange, value);
         }
 
+        private float GetTotalSpent()
+            => _coinspotService.GetAllDeposits().GetTotalDeposited();
+
         private void UpdateTable(float value, DateTime now, string time)
         {
             var list = new List<object>
             {
-                now.ToString("dd MMM yy"),
-                time,
-                "=" + SpentSourceRange,
+                now.ToString("ddd dd MMM yy HH:mm:ss"),
+                GetTotalSpent(),
                 value,
             };
 
-            var appended = _googleSheetsService.Append(ValueTable, list);
+            var appended = _googleSheetsService.AppendList(ValueTable, list);
             AppendGainsTable(appended.TableRange);
         }
 
         internal void AppendGainsTable(string tableRange)
         {
-            var last = tableRange.LastIndexOf(':');
-            var bottomRight = tableRange.Substring(last + 1);
-            int index = 0;
-            while (char.IsLetter(bottomRight[index]))
+            int row = 2;
+            if (tableRange != null)
             {
-                index++;
+                var last = tableRange.LastIndexOf(':');
+                var bottomRight = tableRange.Substring(last + 1);
+                int index = 0;
+                while (char.IsLetter(bottomRight[index]))
+                {
+                    index++;
+                }
+                row = int.Parse(bottomRight.Substring(index)) + 1;
             }
-            int row = int.Parse(bottomRight.Substring(index)) + 1;
+
             var list = new List<object>
             {
-                $"=E{row}-D{row}",
-                $"=G{row}/D{row}"
+                $"=D{row}-C{row}",
+                $"=F{row}/C{row}"
             };
-            _googleSheetsService.Append(GainsTable, list);
+            _googleSheetsService.AppendList(GainsTable, list);
         }
 
         private void ShowBalances()
@@ -284,7 +305,7 @@ namespace CoinSpotUpdater
 
         private void ShowStatus()
         {
-            var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
+            var spent = GetTotalSpent();
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
             var gainPercent = (value / spent - 1.0f) * 100.0f;

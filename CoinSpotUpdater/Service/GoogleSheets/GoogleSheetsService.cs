@@ -80,7 +80,7 @@ namespace CoinSpotUpdater.GoogleSheets
             return request.Execute();
         }
 
-        internal AppendValuesResponse Append(string range, IList<object> values)
+        internal AppendValuesResponse AppendList(string range, IList<object> values)
         {
             return Append(range, new List<IList<object>> { values });
         }
