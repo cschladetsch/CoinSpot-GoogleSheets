@@ -191,7 +191,7 @@ namespace CoinSpotUpdater
             var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
-            var gainPercent = (value / spent - 1.0f) * 100.0f;
+            var gainPercent = ((value / spent) - 1.0f) * 100.0f;
             Colored(() => Line($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
@@ -338,7 +338,7 @@ namespace CoinSpotUpdater
             var spent = GetTotalSpent();
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
-            var gainPercent = (value / spent - 1.0f) * 100.0f;
+            var gainPercent = ((value / spent) - 1.0f) * 100.0f;
 
             if (_lastDollar == 0)
             {

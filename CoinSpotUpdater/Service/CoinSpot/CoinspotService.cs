@@ -150,7 +150,6 @@ namespace CoinSpotUpdater.CoinSpot
             throw new NotImplementedException("Cannot buy, unsure why");
         }
 
-
         private void WaitForCoinSpotApi()
         {
             if (_stopWatch.ElapsedMilliseconds < 1000)
