@@ -1,6 +1,10 @@
 ﻿namespace CoinSpotUpdater.CoinSpot.Dto
 {
-    public class CoinSpotSellOrder : CoinSpotOrder
+    public class CoinSpotSellOrder : CoinSpotQuickSellOrder
     {
+        public float rate;
+
+        public override string ToString()
+            => $"type={cointype}, amount={amount}, rate={rate}";
     }
 }

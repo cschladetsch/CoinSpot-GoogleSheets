@@ -93,6 +93,7 @@
     <Compile Include="Service\CoinSpot\Dto\CoinSpotDeposits.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotHolding.cs" />
     <Compile Include="Service\CoinSpot\CoinspotService.cs" />
+    <Compile Include="Service\CoinSpot\Dto\CoinSpotQuickSellOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotSellOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotTransactions.cs" />
     <Compile Include="Service\GoogleSheets\GoogleSheetsService.cs" />

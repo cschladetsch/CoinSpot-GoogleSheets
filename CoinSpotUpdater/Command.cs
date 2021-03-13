@@ -6,9 +6,9 @@ namespace CoinSpotUpdater
     {
         public string Text;
         public string Description;
-        public Action Action;
+        public Action<string[]> Action;
 
-        public Command(string text, string desc, Action action)
+        public Command(string text, string desc, Action<string[]> action)
         {
             Text = text;
             Description = desc;

@@ -18,6 +18,7 @@ namespace CoinSpotUpdater.CoinSpot
         private readonly string _secret;
         private readonly string _baseUrl;
         private const string _baseReadOnlyUrl = "/api/ro/my/";
+        private const string _baseWriteUrl = "/api/";
         private Stopwatch _stopWatch;
 
         public CoinspotService()
@@ -30,6 +31,12 @@ namespace CoinSpotUpdater.CoinSpot
 
         public static string FromAppSettings(string key)
             => ConfigurationManager.AppSettings.Get(key);
+
+        public string QuickSell(string coin, float aud)
+            => PrivateApiCallJson(_baseWriteUrl + "quote/sell", JsonConvert.SerializeObject(new CoinSpotQuickSellOrder() { amount = aud, cointype = coin }));
+
+        public string Sell(string coin, float aud, float rate)
+            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotSellOrder() { amount = aud, cointype = coin, rate = rate }));
 
         public float GetPortfolioValue()
             => GetMyBalances().GetTotal();

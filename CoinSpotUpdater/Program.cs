@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using CoinSpotUpdater.GoogleSheets;
 using CoinSpotUpdater.CoinSpot;
+using System.Linq;
 
 namespace CoinSpotUpdater
 {
@@ -41,10 +42,10 @@ namespace CoinSpotUpdater
 
             PrepareUpdateTimer();
             AddActions();
-            ShowHelp();
+            ShowHelp(null);
 
             WriteLine();
-            ShowStatus();
+            ShowStatus(null);
         }
 
         private void PrepareUpdateTimer()
@@ -64,7 +65,7 @@ namespace CoinSpotUpdater
             WriteLine();
             Line("\nAuto-update:");
             WriteDateTime();
-            UpdateGoogleSpreadSheet();
+            UpdateGoogleSpreadSheet(null);
             Prompt();
         }
 
@@ -105,10 +106,13 @@ namespace CoinSpotUpdater
                     continue;
                 }
 
-                if (_commands.TryGetValue(input, out Command cmd))
+                var split = input.Split(' ');
+                var cmd = split[0];
+                if (_commands.TryGetValue(cmd, out Command command))
                 {
                     WriteDateTime();
-                    Colored(_commands[input].Action, ConsoleColor.Yellow);
+                    var args = split.Skip(1).ToArray();
+                    Colored(() => command.Action(args), ConsoleColor.Yellow);
                 }
                 else
                 {
@@ -118,9 +122,7 @@ namespace CoinSpotUpdater
         }
 
         private void WriteDateTime()
-        {
-            Colored(() => Line(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
-        }
+            => Colored(() => Line(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
 
         private void Prompt()
         {
@@ -144,22 +146,46 @@ namespace CoinSpotUpdater
 
         private void AddActions()
         {
-            Action("s", "Summary status of all holdings", ShowStatus);
-            Action("g", "Show gain percent", ShowGainPercent);
-            Action("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
-            Action("b", "Balances of all coins", ShowBalances);
-            Action("a", "Balances and summary", ShowAll);
-            Action("p", "Get all Prices", ShowAllPrices);
-            Action("td", "Total Deposits", ShowAllDeposits);
-            Action("d", "Write Deposits", WriteDeposits);
-            Action("buy", "Buy Orders", ShowBuyOrders);
-            Action("sell", "Sell Orders", ShowSellOrders);
-            Action("tr", "Transactions", ShowTransactions);
-            Action("q", "Quit", () => _quit = true);
-            Action("?", "help", ShowHelp);
+            AddAction("s", "Summary status of all holdings", ShowStatus);
+            AddAction("g", "Show gain percent", ShowGainPercent);
+            AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
+            AddAction("b", "Balances of all coins", ShowBalances);
+            AddAction("a", "Balances and summary", ShowAll);
+            AddAction("p", "Get all Prices", ShowAllPrices);
+            AddAction("td", "Total Deposits", ShowAllDeposits);
+            AddAction("d", "Write Deposits", WriteDeposits);
+            AddAction("buy_orders", "Buy Orders", ShowBuyOrders);
+            AddAction("sell_orders", "Sell Orders", ShowSellOrders);
+            AddAction("sell", "Sell 'coin' 'aud' ['rate']", Sell);
+            AddAction("buy", "Buy 'coin' 'aud'", Buy);
+            AddAction("tr", "Transactions", ShowTransactions);
+            AddAction("q", "Quit", (string[] args) => _quit = true);
+            AddAction("?", "help", ShowHelp);
         }
 
-        private void ShowGainPercent()
+        private void Buy(string[] obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Sell(string[] args)
+        {
+            if (args.Length < 2 || args.Length > 3)
+            {
+                throw new ArgumentException("Sell epects 2-3 arguments");
+            }
+
+            if (args.Length == 2)
+            {
+                Colored(() => Line(_coinspotService.QuickSell(args[0], float.Parse(args[1]))), ConsoleColor.DarkRed);
+            }
+            else 
+            {
+                Colored(() => Line(_coinspotService.Sell(args[0], float.Parse(args[1]), float.Parse(args[2]))), ConsoleColor.DarkRed);
+            }
+        }
+
+        private void ShowGainPercent(string[] args)
         {
             var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
             var value = _coinspotService.GetPortfolioValue();
@@ -168,16 +194,16 @@ namespace CoinSpotUpdater
             Colored(() => Line($"Gain %{gainPercent}"), ConsoleColor.Yellow);
         }
 
-        private void ShowSellOrders()
+        private void ShowSellOrders(string[] args)
             => Line(GetAllTransactions().SellOrdersToString());
 
-        private void ShowBuyOrders()
+        private void ShowBuyOrders(string[] args)
             => Line(GetAllTransactions().BuyOrdersToString());
 
-        private void ShowTransactions()
+        private void ShowTransactions(string[] args)
             => Line(GetAllTransactions());
 
-        private void WriteDeposits()
+        private void WriteDeposits(string[] args)
         {
             var deposits = _coinspotService.GetAllDeposits();
             Line(deposits);
@@ -193,25 +219,25 @@ namespace CoinSpotUpdater
             _googleSheetsService.Append("Spent!A1", items);
         }
 
-        private void ShowAllDeposits()
+        private void ShowAllDeposits(string[] args)
             => Line($"Total deposited: {GetTotalSpent()}");
 
-        private void ShowAllPrices()
+        private void ShowAllPrices(string[] args)
             => Line(_coinspotService.GetAllPrices());
 
         private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
             => _coinspotService.GetAllTransactions();
 
-        private void Action(string text, string desciption, Action action)
+        private void AddAction(string text, string desciption, Action<string[]> action)
             => _commands[text] = new Command(text, desciption, action);
 
-        private void ShowAll()
+        private void ShowAll(string[] args)
         {
-            ShowStatus();
-            ShowBalances();
+            ShowStatus(args);
+            ShowBalances(args);
         }
 
-        private void ShowHelp()
+        private void ShowHelp(string[] args)
         {
             foreach (var kv in _commands)
             {
@@ -225,7 +251,7 @@ namespace CoinSpotUpdater
             }
         }
 
-        private void UpdateGoogleSpreadSheet()
+        private void UpdateGoogleSpreadSheet(string[] args)
         {
             try
             {
@@ -292,7 +318,7 @@ namespace CoinSpotUpdater
             _googleSheetsService.AppendList(GainsTable, list);
         }
 
-        private void ShowBalances()
+        private void ShowBalances(string[] args)
         {
             var balances = _coinspotService.GetMyBalances();
             Colored(() => Console.Write(balances), ConsoleColor.Blue);
@@ -303,7 +329,7 @@ namespace CoinSpotUpdater
             }, ConsoleColor.Cyan);
         }
 
-        private void ShowStatus()
+        private void ShowStatus(string[] args)
         {
             var spent = GetTotalSpent();
             var value = _coinspotService.GetPortfolioValue();
