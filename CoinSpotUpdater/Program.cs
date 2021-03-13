@@ -28,6 +28,8 @@ namespace CoinSpotUpdater
         private CoinspotService _coinspotService;
         private Timer _timer;
         private bool _quit;
+        private float _lastDollar;
+        private float _lastGainPercent;
 
         static void Main(string[] args)
         {
@@ -192,7 +194,14 @@ namespace CoinSpotUpdater
             var value = _coinspotService.GetPortfolioValue();
             var gain = value - spent;
             var gainPercent = ((value / spent) - 1.0f) * 100.0f;
-            Colored(() => Line($"Gain %{gainPercent}"), ConsoleColor.Yellow);
+            if (_lastDollar == 0)
+            {
+                _lastGainPercent = gainPercent;
+            }
+            Colored(() => Line($"Gain %{gainPercent:0.##}"), ConsoleColor.Yellow);
+            var diff = (gainPercent - _lastGainPercent);
+            Colored(() => Line($"Diff %{diff:0.###}"), diff < 0 ? ConsoleColor.Red : ConsoleColor.Green);
+            _lastGainPercent = gainPercent;
         }
 
         private void ShowSellOrders(string[] args)
@@ -330,9 +339,6 @@ namespace CoinSpotUpdater
             }, ConsoleColor.Cyan);
         }
         
-        private float _lastDollar;
-        private float _lastGainPercent;
-
         private void ShowStatus(string[] args)
         {
             var spent = GetTotalSpent();
@@ -355,7 +361,7 @@ namespace CoinSpotUpdater
             var diffGain = gainPercent - _lastGainPercent;
             ConsoleColor diffColor = diffDollar < 0 ? ConsoleColor.Red : ConsoleColor.Green;
             Colored(() => Line($"  Diff$ = {value - _lastDollar:C}"), diffColor);
-            Colored(() => Line($"  Diff% = %{gainPercent - _lastGainPercent:0.##}"), diffColor);
+            Colored(() => Line($"  Diff% = %{gainPercent - _lastGainPercent:0.###}"), diffColor);
 
             _lastDollar = value;
             _lastGainPercent = gainPercent;
