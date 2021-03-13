@@ -154,7 +154,7 @@ namespace CoinSpotUpdater
             AddAction("a", "Balances and summary", ShowAll);
             AddAction("p", "Get all Prices", ShowAllPrices);
             AddAction("td", "Total Deposits", ShowAllDeposits);
-            AddAction("d", "Write Deposits", WriteDeposits);
+            AddAction("wd", "Write Deposits - clear table first!", WriteDeposits);
             AddAction("buy_orders", "Buy Orders", ShowBuyOrders);
             AddAction("sell_orders", "Sell Orders", ShowSellOrders);
             AddAction("sell", "Sell 'coin' 'aud' ['rate']", Sell);
@@ -346,10 +346,10 @@ namespace CoinSpotUpdater
                 _lastGainPercent = gainPercent;
             }
 
-            Line($"Spent = {spent:C}");
-            Line($"Value = {value:C}");
-            Line($"Gain$ = {gain:C}");
-            Line($"Gain% = %{gainPercent:0.##}");
+            Line($"Spent   = {spent:C}");
+            Line($"Value   = {value:C}");
+            Line($"Gain$   = {gain:C}");
+            Line($"Gain%   = %{gainPercent:0.##}");
 
             var diffDollar = value - _lastDollar;
             var diffGain = gainPercent - _lastGainPercent;
