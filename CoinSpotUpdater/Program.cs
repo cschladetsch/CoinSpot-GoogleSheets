@@ -129,7 +129,7 @@ namespace CoinSpotUpdater
 
         private void Prompt()
         {
-            Colored(() => Console.Write("# "), ConsoleColor.Green);
+            Colored(() => Console.Write("» "), ConsoleColor.Green);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
