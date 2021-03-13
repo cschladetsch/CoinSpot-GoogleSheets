@@ -45,7 +45,8 @@ namespace CoinSpotUpdater
             ShowHelp(null);
 
             WriteLine();
-            ShowStatus(null);
+            ShowBalances(null);
+            Colored(() => ShowStatus(null), ConsoleColor.Yellow);
         }
 
         private void PrepareUpdateTimer()
@@ -163,9 +164,9 @@ namespace CoinSpotUpdater
             AddAction("?", "help", ShowHelp);
         }
 
-        private void Buy(string[] obj)
+        private void Buy(string[] args)
         {
-            throw new NotImplementedException();
+            _coinspotService.Buy(args[0], float.Parse(args[1]));
         }
 
         private void Sell(string[] args)
@@ -244,7 +245,7 @@ namespace CoinSpotUpdater
                 var cmd = kv.Value;
                 var color = Console.ForegroundColor;
                 Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{cmd.Text,6}  ");
+                Console.Write($"{cmd.Text,12}  ");
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Line($"{cmd.Description}");
                 Console.ForegroundColor = color;

@@ -38,6 +38,9 @@ namespace CoinSpotUpdater.CoinSpot
         public string Sell(string coin, float aud, float rate)
             => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotSellOrder() { amount = aud, cointype = coin, rate = rate }));
 
+        public string Buy(string coin, float aud, float rate)
+            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotBuyOrder() { amount = aud, cointype = coin }));
+
         public float GetPortfolioValue()
             => GetMyBalances().GetTotal();
 
@@ -141,6 +144,12 @@ namespace CoinSpotUpdater.CoinSpot
             }
             return sb.ToString();
         }
+
+        internal string Buy(string v1, float v2)
+        {
+            throw new NotImplementedException("Cannot buy, unsure why");
+        }
+
 
         private void WaitForCoinSpotApi()
         {

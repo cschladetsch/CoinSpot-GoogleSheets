@@ -2,5 +2,7 @@
 {
     public class CoinSpotBuyOrder : CoinSpotOrder
     {
+        public string cointype;
+        public float amount;
     }
 }
