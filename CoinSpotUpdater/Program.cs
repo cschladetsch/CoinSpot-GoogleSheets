@@ -15,13 +15,12 @@ namespace CoinSpotUpdater
         // I have three main Sheets:
         //      1. Summary. Shows a summary of all spent and holdings
         //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
-        //      3. Spent. A table that can be copy-pasted from CoinStop. This contains all your deposits.
-        private const string SpentRange = "Summary!G5";
-        private const string UpdateDateRange = "Summary!G4";
-        private const string TotalValueRange = "Summary!G6";
-        private const string UpdateTimeRange = "Summary!H4";
-        private const string ValueTable = "Table!B2";
-        private const string GainsTable = "Table!F2";
+        private string SpentRange;
+        private string UpdateDateRange;
+        private string TotalValueRange;
+        private string UpdateTimeRange;
+        private string ValueTable;
+        private string GainsTable;
 
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private GoogleSheetsService _googleSheetsService;
@@ -37,8 +36,13 @@ namespace CoinSpotUpdater
             new Program().Run(args);
         }
 
+        public static string FromAppSettings(string key)
+            => ConfigurationManager.AppSettings.Get(key);
+
         public Program()
         {
+            GetSettings();
+
             _googleSheetsService = new GoogleSheetsService();
             _coinspotService = new CoinspotService();
 
@@ -49,6 +53,16 @@ namespace CoinSpotUpdater
             WriteLine();
             ShowBalances(null);
             Colored(() => ShowStatus(null), ConsoleColor.Yellow);
+        }
+
+        private void GetSettings()
+        {
+            SpentRange = FromAppSettings("SpentRange");
+            UpdateDateRange = FromAppSettings("UpdateDateRange");
+            TotalValueRange = FromAppSettings("TotalValueRange");
+            UpdateTimeRange = FromAppSettings("UpdateTimeRange");
+            ValueTable = FromAppSettings("ValueTable");
+            GainsTable = FromAppSettings("GainsTable");
         }
 
         private void PrepareUpdateTimer()
