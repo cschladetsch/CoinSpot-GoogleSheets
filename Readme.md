@@ -2,7 +2,7 @@
 
 [![CodeFactor](https://www.codefactor.io/repository/github/cschladetsch/CryptoHelper/badge)](https://www.codefactor.io/repository/github/cschladetsch/CryptoHelper) [![License](https://img.shields.io/github/license/cschladetsch/CryptoHelper.svg?label=License&maxAge=86400)](./LICENSE) [![Release](https://img.shields.io/github/release/cschladetsch/CryptoHelper.svg?label=Release&maxAge=60)](https://github.com/cschladetsch/CryptoHelper/releases/latest)
 
-Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M).
+Watch the intro [video](https://www.youtube.com/watch?v=csmDEE-CY3M) and an [update about the pi](https://www.youtube.com/watch?v=rvdpkhwGRVk).
 
 This is basically a _CoinSpot/GoogleSheet_ bridge-application. With optional automatic updates to track real gains over time - without including the cost of the coins you purchased.
 
