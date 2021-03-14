@@ -283,11 +283,11 @@ namespace CoinSpotUpdater
             {
                 var value = _coinspotService.GetPortfolioValue();
                 var now = DateTime.Now;
-                var date = now.ToString("dd MMM yy");
+                var date = now.ToString("dd MMM yy HH:mm:ss");
                 var time = now.ToLongTimeString();
 
                 UpdateSummary(value, date, time);
-                UpdateTable(value, now, time);
+                UpdateTable(value, date);
 
                 Line("Updated SpreadSheet");
             }
@@ -308,11 +308,11 @@ namespace CoinSpotUpdater
         private float GetTotalSpent()
             => _coinspotService.GetAllDeposits().GetTotalDeposited();
 
-        private void UpdateTable(float value, DateTime now, string time)
+        private void UpdateTable(float value, string time)
         {
             var list = new List<object>
             {
-                now.ToString("ddd MMM yy HH:mm:ss"),
+                time,
                 GetTotalSpent(),
                 value,
             };
