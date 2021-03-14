@@ -182,6 +182,7 @@
     <Compile Include="Service\CoinSpot\Dto\CoinSpotQuickSellOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotSellOrder.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotTransactions.cs" />
+    <Compile Include="Service\Generic\ICryptoProvider.cs" />
     <Compile Include="Service\GoogleSheets\GoogleSheetsService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

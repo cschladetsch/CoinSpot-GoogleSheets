@@ -29,6 +29,10 @@ namespace CoinSpotUpdater
         private bool _quit;
         private float _lastDollar;
         private float _lastGainPercent;
+        private string _bitFinexKey;
+        private string _bitFinexSecret;
+        private string _service = "cs";
+        Bitfinex.Net.BitfinexClient _bitFinexClient;
 
         static void Main(string[] args)
         {
@@ -63,6 +67,16 @@ namespace CoinSpotUpdater
             UpdateTimeRange = FromAppSettings("UpdateTimeRange");
             ValueTable = FromAppSettings("ValueTable");
             GainsTable = FromAppSettings("GainsTable");
+
+            try
+            {
+                _bitFinexKey = FromAppSettings("BitFinexKey");
+                _bitFinexSecret = FromAppSettings("BitFinexSecret");
+            }
+            catch (Exception e)
+            {
+                Colored(() => Line($"Didn't connect to BitFinex: {e.Message}"), ConsoleColor.Cyan);
+            }
         }
 
         private void PrepareUpdateTimer()
@@ -101,6 +115,8 @@ namespace CoinSpotUpdater
 
         private void Run(string[] args)
         {
+            ChangeToCoinSpot(null);
+
             while (!_quit)
             {
                 try
@@ -145,7 +161,7 @@ namespace CoinSpotUpdater
 
         private void Prompt()
         {
-            Colored(() => Console.Write("» "), ConsoleColor.Green);
+            Colored(() => Console.Write($"{_service} » "), ConsoleColor.Green);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
@@ -165,7 +181,7 @@ namespace CoinSpotUpdater
 
         private void AddActions()
         {
-            AddAction("bf", "Change to BitFinex", ChangeToBinfinex);
+            AddAction("bf", "Change to BitFinex", ChangeToBitFinex);
             AddAction("cs", "Change to CoinSpot", ChangeToCoinSpot);
             AddAction("s", "Summary status of all holdings", ShowStatus);
             AddAction("g", "Show gain percent", ShowGainPercent);
@@ -186,12 +202,32 @@ namespace CoinSpotUpdater
 
         private void ChangeToCoinSpot(string[] obj)
         {
-            throw new NotImplementedException();
+            _coinspotService = new CoinspotService();
+            try
+            {
+                _coinspotService.GetPortfolioValue();
+            }
+            catch (Exception e)
+            {
+                Colored(() => Line(e.Message) , ConsoleColor.Red);
+                return;
+            }
+
+            _service = "CoinSpot";
         }
 
-        private void ChangeToBinfinex(string[] obj)
+        private void ChangeToBitFinex(string[] obj)
         {
-            throw new NotImplementedException();
+            Bitfinex.Net.Objects.BitfinexClientOptions options = new Bitfinex.Net.Objects.BitfinexClientOptions()
+            {
+                ApiCredentials = new CryptoExchange.Net.Authentication.ApiCredentials(_bitFinexKey, _bitFinexSecret)
+            };
+            _bitFinexClient = new Bitfinex.Net.BitfinexClient(options);
+            var result = _bitFinexClient.GetAccountInfo();
+            if (result.Success)
+            {
+                _service = "Bitfinex";
+            }
         }
 
         private void Buy(string[] args)
