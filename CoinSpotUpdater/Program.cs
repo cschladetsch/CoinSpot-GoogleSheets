@@ -165,6 +165,8 @@ namespace CoinSpotUpdater
 
         private void AddActions()
         {
+            AddAction("bf", "Change to BitFinex", ChangeToBinfinex);
+            AddAction("cs", "Change to CoinSpot", ChangeToCoinSpot);
             AddAction("s", "Summary status of all holdings", ShowStatus);
             AddAction("g", "Show gain percent", ShowGainPercent);
             AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
@@ -180,6 +182,16 @@ namespace CoinSpotUpdater
             AddAction("tr", "Transactions", ShowTransactions);
             AddAction("q", "Quit", (string[] args) => _quit = true);
             AddAction("?", "help", ShowHelp);
+        }
+
+        private void ChangeToCoinSpot(string[] obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ChangeToBinfinex(string[] obj)
+        {
+            throw new NotImplementedException();
         }
 
         private void Buy(string[] args)
