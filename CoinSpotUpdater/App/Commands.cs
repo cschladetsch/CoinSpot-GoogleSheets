@@ -37,6 +37,9 @@ namespace CryptoHelper.App
         public void ShowAllPrices(params string[] args)
             => Line(_coinspotService.GetAllPrices());
 
+        public void BrowseSheet(params string[] args)
+            => _sheetUpdater.Browse();
+
         public CoinSpotApi.Dto.CoinSpotTransactions GetAllTransactions()
             => _coinspotService.GetAllTransactions();
 

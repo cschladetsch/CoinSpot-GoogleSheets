@@ -1,16 +1,17 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
+using System.Diagnostics;
 using System.Configuration;
+using System.Security.Cryptography;
 
 using Newtonsoft.Json;
-using CoinSpotApi.Dto;
-using System.Diagnostics;
 
 namespace CoinSpotApi
 {
+    using Dto;
+
     // see https://www.coinspot.com.au/api for full api
     public class CoinspotService
     {

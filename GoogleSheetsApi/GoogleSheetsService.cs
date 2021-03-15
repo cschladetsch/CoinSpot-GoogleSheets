@@ -8,11 +8,12 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using System.Diagnostics;
 
-namespace CryptoHelper.GoogleSheets
+namespace GoogleSheetsApi
 {
     // see https://developers.google.com/sheets/api/quickstart/dotnet
-    class GoogleSheetsService
+    public class GoogleSheetsService
     {
         // If modifying these scopes, delete your previously saved credentials
         private readonly string[] Scopes = { SheetsService.Scope.Spreadsheets, SheetsService.Scope.Drive };
@@ -48,6 +49,11 @@ namespace CryptoHelper.GoogleSheets
             });
         }
 
+        public void Browse()
+        {
+            Process.Start($"https://docs.google.com/spreadsheets/d/{_spreadSheetId}");
+        }
+
         public bool SetValue(string range, object value)
         {
             var rect = new List<IList<object>>();
@@ -72,7 +78,7 @@ namespace CryptoHelper.GoogleSheets
             return response.Values;
         }
 
-        internal AppendValuesResponse Append(string range, IList<IList<object>> values)
+        public AppendValuesResponse Append(string range, IList<IList<object>> values)
         {
             var body = new ValueRange() { Values = values };
             var request = _sheetsService.Spreadsheets.Values.Append(body, _spreadSheetId, range);
@@ -80,7 +86,7 @@ namespace CryptoHelper.GoogleSheets
             return request.Execute();
         }
 
-        internal AppendValuesResponse AppendList(string range, IList<object> values)
+        public AppendValuesResponse AppendList(string range, IList<object> values)
         {
             return Append(range, new List<IList<object>> { values });
         }

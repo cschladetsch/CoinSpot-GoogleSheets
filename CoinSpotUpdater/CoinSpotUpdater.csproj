@@ -86,16 +86,12 @@
     <Compile Include="App\Command.cs" />
     <Compile Include="App\Commands.cs" />
     <Compile Include="App\SheetUpdater.cs" />
-    <Compile Include="Service\GoogleSheets\GoogleSheetsService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config.example" />
     <None Include="App.config" />
-    <None Include="credentials.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -114,6 +110,10 @@
     <ProjectReference Include="..\CoinSpotApi\CoinSpotApi.csproj">
       <Project>{fd63b6d7-2334-4cbf-93e4-3c148523d68f}</Project>
       <Name>CoinSpotApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GoogleSheetsApi\GoogleSheetsApi.csproj">
+      <Project>{8b9b925d-99cf-4f72-81f0-dd79128a3e8d}</Project>
+      <Name>GoogleSheetsApi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

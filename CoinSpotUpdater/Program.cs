@@ -131,12 +131,13 @@ namespace CryptoHelper
             AddAction("b", "Balances of all coins", _commands.ShowBalances);
             AddAction("a", "Balances and summary", _commands.ShowAll);
             AddAction("p", "Get all Prices", _commands.ShowAllPrices);
+            AddAction("o", "Open SpreadSheet", _commands.BrowseSheet);
             AddAction("td", "Total Deposits", _commands.ShowAllDeposits);
             AddAction("wd", "Write Deposits - clear table first!", _commands.WriteDeposits);
-            AddAction("buy_orders", "Buy Orders", _commands.ShowBuyOrders);
-            AddAction("sell_orders", "Sell Orders", _commands.ShowSellOrders);
-            AddAction("sell", "Sell 'coin' 'aud' ['rate']", _commands.Sell);
+            AddAction("buys", "Buy Orders", _commands.ShowBuyOrders);
+            AddAction("sells", "Sell Orders", _commands.ShowSellOrders);
             AddAction("buy", "Buy 'coin' 'aud'", _commands.Buy);
+            AddAction("sell", "Sell 'coin' 'aud' ['rate']", _commands.Sell);
             AddAction("tr", "Transactions", _commands.ShowTransactions);
             AddAction("q", "Quit", (string[] args) => _quit = true);
             AddAction("?", "help", ShowHelp);

@@ -15,12 +15,12 @@ namespace CryptoHelper.App
         private static string GainsTable;
 
         private CoinSpotApi.CoinspotService _coinspotService;
-        private GoogleSheets.GoogleSheetsService _googleSheetsService;
+        private GoogleSheetsApi.GoogleSheetsService _googleSheetsService;
 
         public SheetUpdater(CoinSpotApi.CoinspotService coinspotService)
         {
             _coinspotService = coinspotService;
-            _googleSheetsService = new GoogleSheets.GoogleSheetsService();
+            _googleSheetsService = new GoogleSheetsApi.GoogleSheetsService();
 
             GetSettings();
         }
@@ -33,6 +33,11 @@ namespace CryptoHelper.App
             UpdateTimeRange = GetAppSetting("UpdateTimeRange");
             ValueTable = GetAppSetting("ValueTable");
             GainsTable = GetAppSetting("GainsTable");
+        }
+
+        internal void Browse()
+        {
+            _googleSheetsService.Browse();
         }
 
         public static string GetAppSetting(string key)
