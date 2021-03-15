@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoinSpotUpdater.App
+namespace CryptoHelper.App
 {
     class Command
     {

@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Collections.Generic;
 
-namespace CoinSpotUpdater.CoinSpot.Dto
+namespace CoinSpotApi.Dto
 {
     public class CoinSpotBalances
     {

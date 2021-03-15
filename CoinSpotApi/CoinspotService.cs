@@ -6,13 +6,13 @@ using System.Text;
 using System.Configuration;
 
 using Newtonsoft.Json;
-using CoinSpotUpdater.CoinSpot.Dto;
+using CoinSpotApi.Dto;
 using System.Diagnostics;
 
-namespace CoinSpotUpdater.CoinSpot
+namespace CoinSpotApi
 {
     // see https://www.coinspot.com.au/api for full api
-    class CoinspotService
+    public class CoinspotService
     {
         private readonly string _key;
         private readonly string _secret;
@@ -38,7 +38,7 @@ namespace CoinSpotUpdater.CoinSpot
         public string Sell(string coin, float aud, float rate)
             => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotSellOrder() { amount = aud, cointype = coin, rate = rate }));
 
-        public string Buy(string coin, float aud, float rate)
+        public string Buy(string coin, float aud)
             => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotBuyOrder() { amount = aud, cointype = coin }));
 
         public float GetPortfolioValue()
@@ -53,13 +53,13 @@ namespace CoinSpotUpdater.CoinSpot
         public string GetCoinBalanceJson(string coinType)
             => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
-        internal CoinSpotAllPrices GetAllPrices()
+        public CoinSpotAllPrices GetAllPrices()
             => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
 
-        internal CoinSpotTransactions GetAllTransactions()
+        public CoinSpotTransactions GetAllTransactions()
             => JsonConvert.DeserializeObject<CoinSpotTransactions>(PrivateApiCallJson(_baseReadOnlyUrl + "transactions/open"));
 
-        internal CoinSpotDeposits GetAllDeposits()
+        public CoinSpotDeposits GetAllDeposits()
             => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
         public string PrivateApiCall(string endPoint)
@@ -143,11 +143,6 @@ namespace CoinSpotUpdater.CoinSpot
                 sb.Append(encodedBytes[i].ToString("X2"));
             }
             return sb.ToString();
-        }
-
-        internal string Buy(string v1, float v2)
-        {
-            throw new NotImplementedException("Cannot buy, unsure why");
         }
 
         private void WaitForCoinSpotApi()

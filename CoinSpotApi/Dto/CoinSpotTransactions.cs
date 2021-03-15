@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace CoinSpotUpdater.CoinSpot.Dto
+namespace CoinSpotApi.Dto
 {
     #pragma warning disable 649
-    class CoinSpotTransactions
+    public class CoinSpotTransactions
     {
         public string status;
         public List<CoinSpotOrder> sellorders;

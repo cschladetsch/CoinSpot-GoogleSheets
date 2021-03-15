@@ -2,7 +2,7 @@
 using System.Configuration;
 using System.Collections.Generic;
 
-namespace CoinSpotUpdater.App
+namespace CryptoHelper.App
 {
     class SheetUpdater
     {
@@ -14,10 +14,10 @@ namespace CoinSpotUpdater.App
         private static string ValueTable;
         private static string GainsTable;
 
-        private CoinSpot.CoinspotService _coinspotService;
+        private CoinSpotApi.CoinspotService _coinspotService;
         private GoogleSheets.GoogleSheetsService _googleSheetsService;
 
-        public SheetUpdater(CoinSpot.CoinspotService coinspotService)
+        public SheetUpdater(CoinSpotApi.CoinspotService coinspotService)
         {
             _coinspotService = coinspotService;
             _googleSheetsService = new GoogleSheets.GoogleSheetsService();

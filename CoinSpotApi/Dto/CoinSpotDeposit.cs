@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CoinSpotUpdater.CoinSpot.Dto
+namespace CoinSpotApi.Dto
 {
     public class CoinSpotDeposit
     {

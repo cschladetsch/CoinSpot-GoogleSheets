@@ -9,7 +9,7 @@ using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 
-namespace CoinSpotUpdater.GoogleSheets
+namespace CryptoHelper.GoogleSheets
 {
     // see https://developers.google.com/sheets/api/quickstart/dotnet
     class GoogleSheetsService

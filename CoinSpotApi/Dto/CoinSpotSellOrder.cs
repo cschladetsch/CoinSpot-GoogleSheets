@@ -1,4 +1,4 @@
-﻿namespace CoinSpotUpdater.CoinSpot.Dto
+﻿namespace CoinSpotApi.Dto
 {
     public class CoinSpotSellOrder : CoinSpotQuickSellOrder
     {

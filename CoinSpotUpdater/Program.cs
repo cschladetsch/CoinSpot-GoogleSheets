@@ -4,7 +4,7 @@ using System.Threading;
 using System.Configuration;
 using System.Collections.Generic;
 
-namespace CoinSpotUpdater
+namespace CryptoHelper
 {
     using App;
 

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace CoinSpotUpdater.App
+namespace CryptoHelper.App
 {
-    using CoinSpot;
+    using CoinSpotApi;
 
     class Commands
     {
@@ -37,7 +37,7 @@ namespace CoinSpotUpdater.App
         public void ShowAllPrices(params string[] args)
             => Line(_coinspotService.GetAllPrices());
 
-        public CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
+        public CoinSpotApi.Dto.CoinSpotTransactions GetAllTransactions()
             => _coinspotService.GetAllTransactions();
 
         public float GetTotalSpent()
