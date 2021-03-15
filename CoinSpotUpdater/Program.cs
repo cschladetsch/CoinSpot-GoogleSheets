@@ -14,6 +14,7 @@ namespace CryptoHelper
         private bool _quit;
         private Timer _timer;
         private Commands _commands;
+        private string _lastCommand;
         private Dictionary<string, Command> _commandMap = new Dictionary<string, Command>();
 
         static void Main(string[] args)
@@ -32,14 +33,12 @@ namespace CryptoHelper
         public Program()
         {
             _commands = new Commands();
-
             PrepareUpdateTimer();
             AddActions();
             ShowHelp();
-
             WriteLine();
-            _commands.ShowBalances(null);
-            Colored(() => _commands.ShowStatus(null), ConsoleColor.Yellow);
+            _commands.ShowBalances();
+            _commands.ShowStatus();
         }
 
         private void PrepareUpdateTimer()
@@ -59,7 +58,7 @@ namespace CryptoHelper
             WriteLine();
             Line("\nAuto-update:");
             WriteDateTime();
-            _commands.UpdateGoogleSpreadSheet(null);
+            _commands.UpdateGoogleSpreadSheet();
             Prompt();
         }
 
@@ -100,21 +99,34 @@ namespace CryptoHelper
                 var input = Console.ReadLine();
                 if (string.IsNullOrEmpty(input))
                 {
-                    continue;
+                    if (!string.IsNullOrEmpty(_lastCommand))
+                    {
+                        input = _lastCommand;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
 
-                var split = input.Split(' ');
-                var cmd = split[0];
-                if (_commandMap.TryGetValue(cmd, out Command command))
-                {
-                    WriteDateTime();
-                    var args = split.Skip(1).ToArray();
-                    Colored(() => command.Action(args), ConsoleColor.Yellow);
-                }
-                else
-                {
-                    Colored(() => Line("Type '?' for a list of commands."), ConsoleColor.Red);
-                }
+                ProcessCommand(input);
+            }
+        }
+
+        private void ProcessCommand(string input)
+        {
+            _lastCommand = input;
+            var split = input.Split(' ');
+            var cmd = split[0];
+            if (_commandMap.TryGetValue(cmd, out Command command))
+            {
+                WriteDateTime();
+                var args = split.Skip(1).ToArray();
+                Colored(() => command.Action(args), ConsoleColor.Yellow);
+            }
+            else
+            {
+                Colored(() => Line("Type '?' for a list of commands."), ConsoleColor.Red);
             }
         }
 

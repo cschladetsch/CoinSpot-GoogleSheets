@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Threading;
+using System.Diagnostics;
 using System.Configuration;
 using System.Collections.Generic;
 
@@ -8,7 +9,6 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
-using System.Diagnostics;
 
 namespace GoogleSheetsApi
 {
