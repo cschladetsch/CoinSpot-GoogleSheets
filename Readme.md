@@ -1,4 +1,4 @@
-# CryptoHelper
+# CryptoHelper ![Icon](Resources/icon.png)
 
 [![CodeFactor](https://www.codefactor.io/repository/github/cschladetsch/CryptoHelper/badge)](https://www.codefactor.io/repository/github/cschladetsch/CryptoHelper) [![License](https://img.shields.io/github/license/cschladetsch/CryptoHelper.svg?label=License&maxAge=86400)](./LICENSE) [![Release](https://img.shields.io/github/release/cschladetsch/CryptoHelper.svg?label=Release&maxAge=60)](https://github.com/cschladetsch/CryptoHelper/releases/latest)
 
