@@ -1,20 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace CoinSpotUpdater
 {
+    using CoinSpot;
+    using GoogleSheets;
+
     class Commands
     {
-        private CoinSpot.CoinspotService _coinspotService;
-        private GoogleSheets.GoogleSheetsService _googleSheetsService;
+        // You will want to change these to match your local setup in App.config.
+        public static string SpentRange;
+        public static string UpdateDateRange;
+        public static string TotalValueRange;
+        public static string UpdateTimeRange;
+        public static string ValueTable;
+        public static string GainsTable;
+
+        private GoogleSheetsService _googleSheetsService;
+        private CoinspotService _coinspotService;
         private float _lastDollar;
         private float _lastGainPercent;
 
-        public Commands(Program program)
+        public Commands()
         {
-            _coinspotService = program.GetCoinspotService();
-            _googleSheetsService = program.GetGoogleSheetsService();
+            _coinspotService = new CoinspotService();
+            _googleSheetsService = new GoogleSheetsService();
+
+            GetSettings();
         }
+
+        private void GetSettings()
+        {
+            SpentRange = FromAppSettings("SpentRange");
+            UpdateDateRange = FromAppSettings("UpdateDateRange");
+            TotalValueRange = FromAppSettings("TotalValueRange");
+            UpdateTimeRange = FromAppSettings("UpdateTimeRange");
+            ValueTable = FromAppSettings("ValueTable");
+            GainsTable = FromAppSettings("GainsTable");
+        }
+
+        public static string FromAppSettings(string key)
+            => ConfigurationManager.AppSettings.Get(key);
 
         public void Buy(string[] args)
         {
@@ -116,10 +143,10 @@ namespace CoinSpotUpdater
 
         public void UpdateSummary(float value, string date, string time)
         {
-            _googleSheetsService.SetValue(Program.SpentRange, GetTotalSpent());
-            _googleSheetsService.SetValue(Program.UpdateDateRange, date);
-            _googleSheetsService.SetValue(Program.UpdateTimeRange, time);
-            _googleSheetsService.SetValue(Program.TotalValueRange, value);
+            _googleSheetsService.SetValue(SpentRange, GetTotalSpent());
+            _googleSheetsService.SetValue(UpdateDateRange, date);
+            _googleSheetsService.SetValue(UpdateTimeRange, time);
+            _googleSheetsService.SetValue(TotalValueRange, value);
         }
 
         public float GetTotalSpent()
@@ -134,7 +161,7 @@ namespace CoinSpotUpdater
                 value,
             };
 
-            var appended = _googleSheetsService.AppendList(Program.ValueTable, list);
+            var appended = _googleSheetsService.AppendList(ValueTable, list);
             AppendGainsTable(appended.TableRange);
         }
 
@@ -158,7 +185,8 @@ namespace CoinSpotUpdater
                 $"=D{row}-C{row}",
                 $"=F{row}/C{row}"
             };
-            _googleSheetsService.AppendList(Program.GainsTable, list);
+
+            _googleSheetsService.AppendList(GainsTable, list);
         }
 
         public void ShowBalances(string[] args)

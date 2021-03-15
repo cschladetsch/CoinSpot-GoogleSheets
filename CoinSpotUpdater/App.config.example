@@ -8,15 +8,17 @@
         <add key="updateTimerMinutes" value="0"/>
         <add key="myCurrency" value="AUD"/>
 
+        <add key="BitFinexKey" value="" />
+        <add key="BitFinexSecret" value="" />
+
         <add key="SpentRange" value="Summary!G5" />
         <add key="UpdateDateRange" value="Summary!G4" />
         <add key="TotalValueRange" value="Summary!G6" />
         <add key="UpdateTimeRange" value="Summary!H4" />
         <add key="ValueTable" value="Table!B2" />
         <add key="GainsTable" value="Table!F2" />
-
     </appSettings>
-    <startup> 
+    <startup>
         <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
     </startup>
 </configuration>

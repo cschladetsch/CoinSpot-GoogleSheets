@@ -1,30 +1,17 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Configuration;
 using System.Collections.Generic;
-
-using CoinSpotUpdater.GoogleSheets;
-using CoinSpotUpdater.CoinSpot;
-using System.Linq;
 
 namespace CoinSpotUpdater
 {
     class Program
     {
-        // You will want to change these to match your local setup in App.config.
-        public static string SpentRange;
-        public static string UpdateDateRange;
-        public static string TotalValueRange;
-        public static string UpdateTimeRange;
-        public static string ValueTable;
-        public static string GainsTable;
-
-        private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
-        private GoogleSheetsService _googleSheetsService;
-        private CoinspotService _coinspotService;
-        private Timer _timer;
         private bool _quit;
+        private Timer _timer;
         private Commands _command;
+        private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
 
         static void Main(string[] args)
         {
@@ -32,17 +19,9 @@ namespace CoinSpotUpdater
             new Program().Run(args);
         }
 
-        public static string FromAppSettings(string key)
-            => ConfigurationManager.AppSettings.Get(key);
-
         public Program()
         {
-            GetSettings();
-
-            _googleSheetsService = new GoogleSheetsService();
-            _coinspotService = new CoinspotService();
-
-            _command = new Commands(this);
+            _command = new Commands();
 
             PrepareUpdateTimer();
             AddActions();
@@ -53,31 +32,11 @@ namespace CoinSpotUpdater
             Colored(() => _command.ShowStatus(null), ConsoleColor.Yellow);
         }
 
-        internal CoinspotService GetCoinspotService() => _coinspotService;
-        internal GoogleSheetsService GetGoogleSheetsService() => _googleSheetsService;
-
-        public void ShowHelp(string[] args)
+        private static void PrintHeader()
         {
-            foreach (var kv in _commands)
-            {
-                var cmd = kv.Value;
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{cmd.Text,12}  ");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Line($"{cmd.Description}");
-                Console.ForegroundColor = color;
-            }
-        }
-
-        private void GetSettings()
-        {
-            SpentRange = FromAppSettings("SpentRange");
-            UpdateDateRange = FromAppSettings("UpdateDateRange");
-            TotalValueRange = FromAppSettings("TotalValueRange");
-            UpdateTimeRange = FromAppSettings("UpdateTimeRange");
-            ValueTable = FromAppSettings("ValueTable");
-            GainsTable = FromAppSettings("GainsTable");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Line($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+            WriteLine();
         }
 
         private void PrepareUpdateTimer()
@@ -101,19 +60,6 @@ namespace CoinSpotUpdater
             Prompt();
         }
 
-        private static void PrintHeader()
-        {
-            Console.ForegroundColor = ConsoleColor.Gray;
-            Line($"Crypto Updater v{System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
-            WriteLine();
-        }
-
-        private static void WriteLine()
-            => Console.WriteLine();
-
-        public static void Line(object text)
-            => Console.WriteLine(text);
-
         private void Run(string[] args)
         {
             while (!_quit)
@@ -128,6 +74,26 @@ namespace CoinSpotUpdater
                 }
             }
         }
+
+        public void ShowHelp(string[] args)
+        {
+            foreach (var kv in _commands)
+            {
+                var cmd = kv.Value;
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{cmd.Text,12}  ");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Line($"{cmd.Description}");
+                Console.ForegroundColor = color;
+            }
+        }
+
+        private static void WriteLine()
+            => Console.WriteLine();
+
+        public static void Line(object text)
+            => Console.WriteLine(text);
 
         private void Repl()
         {
@@ -160,7 +126,7 @@ namespace CoinSpotUpdater
 
         private void Prompt()
         {
-            Colored(() => Console.Write("» "), ConsoleColor.Green);
+            Colored(() => Console.Write("» "), ConsoleColor.DarkGray);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
