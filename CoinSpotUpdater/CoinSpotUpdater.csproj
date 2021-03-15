@@ -83,8 +83,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Command.cs" />
-    <Compile Include="Commands.cs" />
+    <Compile Include="App\Command.cs" />
+    <Compile Include="App\Commands.cs" />
+    <Compile Include="App\SheetUpdater.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotAllPrices.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBalances.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBuyOrder.cs" />
