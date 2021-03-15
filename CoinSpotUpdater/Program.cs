@@ -11,24 +11,20 @@ namespace CoinSpotUpdater
 {
     class Program
     {
-        // You will want to change these to match your local setup:
-        // I have three main Sheets:
-        //      1. Summary. Shows a summary of all spent and holdings
-        //      2. Table. This is updated regularly by this app. Contains two tables: total value and total gain %
-        private string SpentRange;
-        private string UpdateDateRange;
-        private string TotalValueRange;
-        private string UpdateTimeRange;
-        private string ValueTable;
-        private string GainsTable;
+        // You will want to change these to match your local setup in App.config.
+        public static string SpentRange;
+        public static string UpdateDateRange;
+        public static string TotalValueRange;
+        public static string UpdateTimeRange;
+        public static string ValueTable;
+        public static string GainsTable;
 
         private Dictionary<string, Command> _commands = new Dictionary<string, Command>();
         private GoogleSheetsService _googleSheetsService;
         private CoinspotService _coinspotService;
         private Timer _timer;
         private bool _quit;
-        private float _lastDollar;
-        private float _lastGainPercent;
+        private Commands _command;
 
         static void Main(string[] args)
         {
@@ -46,13 +42,32 @@ namespace CoinSpotUpdater
             _googleSheetsService = new GoogleSheetsService();
             _coinspotService = new CoinspotService();
 
+            _command = new Commands(this);
+
             PrepareUpdateTimer();
             AddActions();
             ShowHelp(null);
 
             WriteLine();
-            ShowBalances(null);
-            Colored(() => ShowStatus(null), ConsoleColor.Yellow);
+            _command.ShowBalances(null);
+            Colored(() => _command.ShowStatus(null), ConsoleColor.Yellow);
+        }
+
+        internal CoinspotService GetCoinspotService() => _coinspotService;
+        internal GoogleSheetsService GetGoogleSheetsService() => _googleSheetsService;
+
+        public void ShowHelp(string[] args)
+        {
+            foreach (var kv in _commands)
+            {
+                var cmd = kv.Value;
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write($"{cmd.Text,12}  ");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Line($"{cmd.Description}");
+                Console.ForegroundColor = color;
+            }
         }
 
         private void GetSettings()
@@ -82,7 +97,7 @@ namespace CoinSpotUpdater
             WriteLine();
             Line("\nAuto-update:");
             WriteDateTime();
-            UpdateGoogleSpreadSheet(null);
+            _command.UpdateGoogleSpreadSheet(null);
             Prompt();
         }
 
@@ -96,7 +111,7 @@ namespace CoinSpotUpdater
         private static void WriteLine()
             => Console.WriteLine();
 
-        private static void Line(object text)
+        public static void Line(object text)
             => Console.WriteLine(text);
 
         private void Run(string[] args)
@@ -149,7 +164,7 @@ namespace CoinSpotUpdater
             Console.ForegroundColor = ConsoleColor.White;
         }
 
-        private void Colored(Action action, ConsoleColor color)
+        public static void Colored(Action action, ConsoleColor color)
         {
             var currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
@@ -159,7 +174,7 @@ namespace CoinSpotUpdater
             }
             catch (Exception e)
             {
-                WriteException(e);
+                Colored(() => Line(e.Message), ConsoleColor.Red);
             }
             finally
             {
@@ -167,229 +182,27 @@ namespace CoinSpotUpdater
             }
         }
 
-        private void WriteException(Exception e)
-        {
-            Colored(() => Line(e.Message), ConsoleColor.Red);
-        }
-
         private void AddActions()
         {
-            AddAction("s", "Summary status of all holdings", ShowStatus);
-            AddAction("g", "Show gain percent", ShowGainPercent);
-            AddAction("u", "Update Google Spreadsheet", UpdateGoogleSpreadSheet);
-            AddAction("b", "Balances of all coins", ShowBalances);
-            AddAction("a", "Balances and summary", ShowAll);
-            AddAction("p", "Get all Prices", ShowAllPrices);
-            AddAction("td", "Total Deposits", ShowAllDeposits);
-            AddAction("wd", "Write Deposits - clear table first!", WriteDeposits);
-            AddAction("buy_orders", "Buy Orders", ShowBuyOrders);
-            AddAction("sell_orders", "Sell Orders", ShowSellOrders);
-            AddAction("sell", "Sell 'coin' 'aud' ['rate']", Sell);
-            AddAction("buy", "Buy 'coin' 'aud'", Buy);
-            AddAction("tr", "Transactions", ShowTransactions);
+            AddAction("s", "Summary status of all holdings", _command.ShowStatus);
+            AddAction("g", "Show gain percent", _command.ShowGainPercent);
+            AddAction("u", "Update Google Spreadsheet", _command.UpdateGoogleSpreadSheet);
+            AddAction("b", "Balances of all coins", _command.ShowBalances);
+            AddAction("a", "Balances and summary", _command.ShowAll);
+            AddAction("p", "Get all Prices", _command.ShowAllPrices);
+            AddAction("td", "Total Deposits", _command.ShowAllDeposits);
+            AddAction("wd", "Write Deposits - clear table first!", _command.WriteDeposits);
+            AddAction("buy_orders", "Buy Orders", _command.ShowBuyOrders);
+            AddAction("sell_orders", "Sell Orders", _command.ShowSellOrders);
+            AddAction("sell", "Sell 'coin' 'aud' ['rate']", _command.Sell);
+            AddAction("buy", "Buy 'coin' 'aud'", _command.Buy);
+            AddAction("tr", "Transactions", _command.ShowTransactions);
             AddAction("q", "Quit", (string[] args) => _quit = true);
             AddAction("?", "help", ShowHelp);
         }
 
-        private void Buy(string[] args)
-        {
-            _coinspotService.Buy(args[0], float.Parse(args[1]));
-        }
-
-        private void Sell(string[] args)
-        {
-            if (args.Length < 2 || args.Length > 3)
-            {
-                throw new ArgumentException("Sell epects 2-3 arguments");
-            }
-
-            if (args.Length == 2)
-            {
-                Colored(() => Line(_coinspotService.QuickSell(args[0], float.Parse(args[1]))), ConsoleColor.DarkRed);
-            }
-            else 
-            {
-                Colored(() => Line(_coinspotService.Sell(args[0], float.Parse(args[1]), float.Parse(args[2]))), ConsoleColor.DarkRed);
-            }
-        }
-
-        private void ShowGainPercent(string[] args)
-        {
-            var spent = _coinspotService.GetAllDeposits().GetTotalDeposited();
-            var value = _coinspotService.GetPortfolioValue();
-            var gain = value - spent;
-            var gainPercent = ((value / spent) - 1.0f) * 100.0f;
-            if (_lastDollar == 0)
-            {
-                _lastGainPercent = gainPercent;
-            }
-            Colored(() => Line($"Gain %{gainPercent:0.##}"), ConsoleColor.Yellow);
-            var diff = (gainPercent - _lastGainPercent);
-            Colored(() => Line($"Diff %{diff:0.###}"), diff < 0 ? ConsoleColor.Red : ConsoleColor.Green);
-            _lastGainPercent = gainPercent;
-        }
-
-        private void ShowSellOrders(string[] args)
-            => Line(GetAllTransactions().SellOrdersToString());
-
-        private void ShowBuyOrders(string[] args)
-            => Line(GetAllTransactions().BuyOrdersToString());
-
-        private void ShowTransactions(string[] args)
-            => Line(GetAllTransactions());
-
-        private void WriteDeposits(string[] args)
-        {
-            var deposits = _coinspotService.GetAllDeposits();
-            Line(deposits);
-            var items = new List<IList<object>>();
-            foreach (var deposit in deposits.deposits)
-            {
-                items.Add(new List<object>()
-                {
-                    deposit.created.ToString("dd MMMM yyyy HH:mm:ss").Replace(".", ""),
-                    deposit.amount
-                });
-            }
-            _googleSheetsService.Append("Spent!A1", items);
-        }
-
-        private void ShowAllDeposits(string[] args)
-            => Line($"Total deposited: {GetTotalSpent()}");
-
-        private void ShowAllPrices(string[] args)
-            => Line(_coinspotService.GetAllPrices());
-
-        private CoinSpot.Dto.CoinSpotTransactions GetAllTransactions()
-            => _coinspotService.GetAllTransactions();
-
         private void AddAction(string text, string desciption, Action<string[]> action)
             => _commands[text] = new Command(text, desciption, action);
 
-        private void ShowAll(string[] args)
-        {
-            ShowStatus(args);
-            ShowBalances(args);
-        }
-
-        private void ShowHelp(string[] args)
-        {
-            foreach (var kv in _commands)
-            {
-                var cmd = kv.Value;
-                var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.Write($"{cmd.Text,12}  ");
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Line($"{cmd.Description}");
-                Console.ForegroundColor = color;
-            }
-        }
-
-        private void UpdateGoogleSpreadSheet(string[] args)
-        {
-            try
-            {
-                var value = _coinspotService.GetPortfolioValue();
-                var now = DateTime.Now;
-                var date = now.ToString("dd MMM yy HH:mm:ss");
-                var time = now.ToLongTimeString();
-
-                UpdateSummary(value, date, time);
-                UpdateTable(value, date);
-
-                Line("Updated SpreadSheet");
-            }
-            catch (Exception e)
-            {
-                Colored(() => Line($"Error updating: {e.Message}"), ConsoleColor.Red);
-            }
-        }
-
-        private void UpdateSummary(float value, string date, string time)
-        {
-            _googleSheetsService.SetValue(SpentRange, GetTotalSpent());
-            _googleSheetsService.SetValue(UpdateDateRange, date);
-            _googleSheetsService.SetValue(UpdateTimeRange, time);
-            _googleSheetsService.SetValue(TotalValueRange, value);
-        }
-
-        private float GetTotalSpent()
-            => _coinspotService.GetAllDeposits().GetTotalDeposited();
-
-        private void UpdateTable(float value, string time)
-        {
-            var list = new List<object>
-            {
-                time,
-                GetTotalSpent(),
-                value,
-            };
-
-            var appended = _googleSheetsService.AppendList(ValueTable, list);
-            AppendGainsTable(appended.TableRange);
-        }
-
-        internal void AppendGainsTable(string tableRange)
-        {
-            int row = 2;
-            if (tableRange != null)
-            {
-                var last = tableRange.LastIndexOf(':');
-                var bottomRight = tableRange.Substring(last + 1);
-                int index = 0;
-                while (char.IsLetter(bottomRight[index]))
-                {
-                    index++;
-                }
-                row = int.Parse(bottomRight.Substring(index)) + 1;
-            }
-
-            var list = new List<object>
-            {
-                $"=D{row}-C{row}",
-                $"=F{row}/C{row}"
-            };
-            _googleSheetsService.AppendList(GainsTable, list);
-        }
-
-        private void ShowBalances(string[] args)
-        {
-            var balances = _coinspotService.GetMyBalances();
-            Colored(() => Console.Write(balances), ConsoleColor.Blue);
-            Colored(() =>
-            {
-                Console.Write($"TOTAL: ");
-                Line($"{balances.GetTotal():C}");
-            }, ConsoleColor.Cyan);
-        }
-        
-        private void ShowStatus(string[] args)
-        {
-            var spent = GetTotalSpent();
-            var value = _coinspotService.GetPortfolioValue();
-            var gain = value - spent;
-            var gainPercent = ((value / spent) - 1.0f) * 100.0f;
-
-            if (_lastDollar == 0)
-            {
-                _lastDollar = value;
-                _lastGainPercent = gainPercent;
-            }
-
-            Line($"Spent   = {spent:C}");
-            Line($"Value   = {value:C}");
-            Line($"Gain$   = {gain:C}");
-            Line($"Gain%   = %{gainPercent:0.##}");
-
-            var diffDollar = value - _lastDollar;
-            var diffGain = gainPercent - _lastGainPercent;
-            ConsoleColor diffColor = diffDollar < 0 ? ConsoleColor.Red : ConsoleColor.Green;
-            Colored(() => Line($"  Diff$ = {value - _lastDollar:C}"), diffColor);
-            Colored(() => Line($"  Diff% = %{gainPercent - _lastGainPercent:0.###}"), diffColor);
-
-            _lastDollar = value;
-            _lastGainPercent = gainPercent;
-        }
     }
 }

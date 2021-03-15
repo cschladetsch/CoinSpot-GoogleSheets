@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Command.cs" />
+    <Compile Include="Commands.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotAllPrices.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBalances.cs" />
     <Compile Include="Service\CoinSpot\Dto\CoinSpotBuyOrder.cs" />
