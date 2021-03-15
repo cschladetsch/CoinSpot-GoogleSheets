@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CoinSpotUpdater
 {
     class Commands
     {
-        private Program _program;
         private CoinSpot.CoinspotService _coinspotService;
         private GoogleSheets.GoogleSheetsService _googleSheetsService;
         private float _lastDollar;
@@ -16,7 +12,6 @@ namespace CoinSpotUpdater
 
         public Commands(Program program)
         {
-            _program = program;
             _coinspotService = program.GetCoinspotService();
             _googleSheetsService = program.GetGoogleSheetsService();
         }
@@ -111,7 +106,7 @@ namespace CoinSpotUpdater
                 UpdateSummary(value, date, time);
                 UpdateTable(value, date);
 
-                Program.Line("Updated SpreadSheet");
+                Line("Updated SpreadSheet");
             }
             catch (Exception e)
             {
@@ -173,7 +168,7 @@ namespace CoinSpotUpdater
             Program.Colored(() =>
             {
                 Console.Write($"TOTAL: ");
-                Program.Line($"{balances.GetTotal():C}");
+                Line($"{balances.GetTotal():C}");
             }, ConsoleColor.Cyan);
         }
         
@@ -207,6 +202,5 @@ namespace CoinSpotUpdater
 
         public static void Line(object text)
             => Console.WriteLine(text);
-
     }
 }
