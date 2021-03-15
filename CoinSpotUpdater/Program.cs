@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading;
+using System.Diagnostics;
 using System.Configuration;
 using System.Collections.Generic;
 
@@ -132,8 +133,9 @@ namespace CryptoHelper
             AddAction("a", "Balances and summary", _commands.ShowAll);
             AddAction("p", "Get all Prices", _commands.ShowAllPrices);
             AddAction("o", "Open SpreadSheet", _commands.BrowseSheet);
+            AddAction("c", "Open CoinSpot", OpenCoinSpot);
             AddAction("td", "Total Deposits", _commands.ShowAllDeposits);
-            AddAction("wd", "Write Deposits - clear table first!", _commands.WriteDeposits);
+            AddAction("!wd", "Write Deposits - clear table first!", _commands.WriteDeposits);
             AddAction("buys", "Buy Orders", _commands.ShowBuyOrders);
             AddAction("sells", "Sell Orders", _commands.ShowSellOrders);
             AddAction("buy", "Buy 'coin' 'aud'", _commands.Buy);
@@ -142,6 +144,9 @@ namespace CryptoHelper
             AddAction("q", "Quit", (string[] args) => _quit = true);
             AddAction("?", "help", ShowHelp);
         }
+
+        private void OpenCoinSpot(params string[] obj)
+            => Process.Start("https://www.coinspot.com.au/my/dashboard");
 
         private void AddAction(string text, string desciption, Action<string[]> action)
             => _commandMap[text] = new Command(text, desciption, action);
