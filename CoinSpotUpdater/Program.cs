@@ -14,7 +14,7 @@ namespace CryptoHelper
         private bool _quit;
         private Timer _timer;
         private Commands _commands;
-        private string _lastCommand;
+        private string _lastCommand = "s";
         private Dictionary<string, Command> _commandMap = new Dictionary<string, Command>();
 
         static void Main(string[] args)
