@@ -157,10 +157,19 @@ namespace CoinSpotUpdater
             {
                 action();
             }
+            catch (Exception e)
+            {
+                WriteException(e);
+            }
             finally
             {
                 Console.ForegroundColor = currentColor;
             }
+        }
+
+        private void WriteException(Exception e)
+        {
+            Colored(() => Line(e.Message), ConsoleColor.Red);
         }
 
         private void AddActions()
