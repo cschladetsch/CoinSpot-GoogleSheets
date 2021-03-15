@@ -203,6 +203,5 @@ namespace CoinSpotUpdater
 
         private void AddAction(string text, string desciption, Action<string[]> action)
             => _commands[text] = new Command(text, desciption, action);
-
     }
 }
