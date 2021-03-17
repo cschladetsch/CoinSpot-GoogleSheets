@@ -66,10 +66,12 @@ namespace CoinSpotApi
         public string PrivateApiCall(string endPoint)
             => PrivateApiCall(endPoint, "{}");
 
+        private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
+            => PrivateApiCall(endPointUrl, JSONParameters);
+
         public string PublicApiCall(string url)
         {
-            var call = _baseUrl + url;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(call);
+            var request = (HttpWebRequest)WebRequest.Create(_baseUrl + url);
             using (var reader = new StreamReader(request.GetResponse().GetResponseStream()))
             {
                 return reader.ReadToEnd();
@@ -94,9 +96,6 @@ namespace CoinSpotApi
 
             return MakeCall(parameterBytes, request);
         }
-
-        private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
-            => PrivateApiCall(endPointUrl, JSONParameters);
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)
         {
