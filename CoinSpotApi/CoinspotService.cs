@@ -12,7 +12,7 @@ namespace CoinSpotApi
 {
     using Dto;
 
-    // see https://www.coinspot.com.au/api for full api
+    // See https://www.coinspot.com.au/api for full Api.
     public class CoinspotService
     {
         private readonly string _key;
@@ -24,35 +24,17 @@ namespace CoinSpotApi
 
         public CoinspotService()
         {
-            _key = FromAppSettings("coinSpotKey");
-            _secret = FromAppSettings("coinSpotSecret");
-            _baseUrl = FromAppSettings("coinSpotSite");
+            _key = GetAppSetting("coinSpotKey");
+            _secret = GetAppSetting("coinSpotSecret");
+            _baseUrl = GetAppSetting("coinSpotSite");
             _stopWatch = new Stopwatch();
         }
 
-        public static string FromAppSettings(string key)
+        public static string GetAppSetting(string key)
             => ConfigurationManager.AppSettings.Get(key);
-
-        public string QuickSell(string coin, float aud)
-            => PrivateApiCallJson(_baseWriteUrl + "quote/sell", JsonConvert.SerializeObject(new CoinSpotQuickSellOrder() { amount = aud, cointype = coin }));
-
-        public string Sell(string coin, float aud, float rate)
-            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotSellOrder() { amount = aud, cointype = coin, rate = rate }));
-
-        public string Buy(string coin, float aud)
-            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotBuyOrder() { amount = aud, cointype = coin }));
-
-        public float GetPortfolioValue()
-            => GetMyBalances().GetTotal();
 
         public CoinSpotBalances GetMyBalances()
             => JsonConvert.DeserializeObject<CoinSpotBalances>(GetMyBalancesJson());
-
-        public string GetMyBalancesJson(string JSONParameters = "{}")
-            => PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
-
-        public string GetCoinBalanceJson(string coinType)
-            => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
 
         public CoinSpotAllPrices GetAllPrices()
             => JsonConvert.DeserializeObject<CoinSpotAllPrices>(PublicApiCall("/pubapi/latest"));
@@ -63,11 +45,29 @@ namespace CoinSpotApi
         public CoinSpotDeposits GetAllDeposits()
             => JsonConvert.DeserializeObject<CoinSpotDeposits>(PrivateApiCallJson(_baseReadOnlyUrl + "deposits"));
 
+        public float GetPortfolioValue()
+            => GetMyBalances().GetTotal();
+
+        public string GetMyBalancesJson(string JSONParameters = "{}")
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances", JSONParameters);
+
         public string PrivateApiCall(string endPoint)
             => PrivateApiCall(endPoint, "{}");
 
         private string PrivateApiCallJson(string endPointUrl, string JSONParameters = "{}")
             => PrivateApiCall(endPointUrl, JSONParameters);
+
+        public string GetCoinBalanceJson(string coinType)
+            => PrivateApiCallJson(_baseReadOnlyUrl + "balances/:" + coinType);
+
+        public string QuickSell(string coin, float aud)
+            => PrivateApiCallJson(_baseWriteUrl + "quote/sell", JsonConvert.SerializeObject(new CoinSpotQuickSellOrder() { amount = aud, cointype = coin }));
+
+        public string Sell(string coin, float aud, float rate)
+            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotSellOrder() { amount = aud, cointype = coin, rate = rate }));
+
+        public string Buy(string coin, float aud)
+            => PrivateApiCallJson(_baseWriteUrl + "sell", JsonConvert.SerializeObject(new CoinSpotBuyOrder() { amount = aud, cointype = coin }));
 
         public string PublicApiCall(string url)
         {
@@ -93,7 +93,6 @@ namespace CoinSpotApi
             var parameterBytes = Encoding.UTF8.GetBytes(parameters);
             var signedData = SignData(parameterBytes);
             var request = MakeRequest(endpointURL, parameterBytes, signedData);
-
             return MakeCall(parameterBytes, request);
         }
 
@@ -130,7 +129,6 @@ namespace CoinSpotApi
             {
                 responseText = ex.Message;
             }
-
             return responseText;
         }
 

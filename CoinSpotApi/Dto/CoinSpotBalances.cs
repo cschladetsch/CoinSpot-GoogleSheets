@@ -11,7 +11,7 @@ namespace CoinSpotApi.Dto
         private readonly string _myCurrency;
 
         public CoinSpotBalances()
-            => _myCurrency = CoinspotService.FromAppSettings("myCurrency");
+            => _myCurrency = CoinspotService.GetAppSetting("myCurrency");
 
         public float GetTotal()
         {
