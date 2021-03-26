@@ -182,7 +182,7 @@ namespace CryptoHelper
         }
 
         private void WriteDateTime()
-            => Colored(() => Line(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.Magenta);
+            => Colored(() => Line(DateTime.Now.ToString("dd MMM yy @HH:mm:ss")), ConsoleColor.DarkGray);
 
         private static void WriteLine()
             => Console.WriteLine();

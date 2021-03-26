@@ -76,9 +76,10 @@ namespace CryptoHelper.App
             {
                 _lastGainPercent = gainPercent;
             }
-            Colored(() => Line($"Gain %{gainPercent:0.##}"), ConsoleColor.Yellow);
+            var color = gainPercent < 0 ? ConsoleColor.Red : ConsoleColor.Green;
+            Colored(() => Line($"Gain %{gainPercent:0.##}"), color);
             var diff = (gainPercent - _lastGainPercent);
-            Colored(() => Line($"Diff %{diff:0.###}"), diff < 0 ? ConsoleColor.Red : ConsoleColor.Green);
+            Colored(() => Line($"Diff %{diff:0.###}"), color);
             _lastGainPercent = gainPercent;
         }
 
@@ -152,12 +153,13 @@ namespace CryptoHelper.App
         private static ConsoleColor CalcDiffColor(float diffGain)
         {
             ConsoleColor diffColor;
+            var neg = diffGain < 0;
 
             if (Math.Abs(diffGain) < 0.01f)
                 diffColor = ConsoleColor.DarkGray;
-            else if (diffGain < 0.03f)
-                diffColor = ConsoleColor.DarkMagenta;
-            else if (diffGain < 0.03f)
+            else if (neg && diffGain > -0.05f)
+                diffColor = ConsoleColor.DarkRed;
+            else if (!neg && diffGain < 0.05f)
                 diffColor = ConsoleColor.DarkGreen;
             else
                 diffColor = diffGain < 0 ? ConsoleColor.Red : ConsoleColor.Green;
