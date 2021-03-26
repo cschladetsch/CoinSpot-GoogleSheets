@@ -132,7 +132,7 @@ namespace CryptoHelper
 
         private void Prompt()
         {
-            Colored(() => Console.Write("» "), ConsoleColor.DarkGray);
+            Colored(() => Console.Write("» "), ConsoleColor.DarkGreen);
             Console.ForegroundColor = ConsoleColor.White;
         }
 
