@@ -143,7 +143,16 @@ namespace CryptoHelper.App
 
             var diffDollar = value - _lastDollar;
             var diffGain = gainPercent - _lastGainPercent;
-            var diffColor = diffDollar < 0 ? ConsoleColor.Red : ConsoleColor.Green;
+            var diffColor = ConsoleColor.Green;
+            if (Math.Abs(diffGain) < 1)
+            {
+                diffColor = ConsoleColor.DarkYellow;
+            }
+            else
+            {
+                diffColor = diffDollar < 0 ? ConsoleColor.Red : ConsoleColor.Green;
+            }
+
             Colored(() => Line($"  Diff$ = {value - _lastDollar:C}"), diffColor);
             Colored(() => Line($"  Diff% = %{gainPercent - _lastGainPercent:0.###}"), diffColor);
         }
