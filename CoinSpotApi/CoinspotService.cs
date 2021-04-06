@@ -80,20 +80,27 @@ namespace CoinSpotApi
 
         public string PrivateApiCall(string endPoint, string jsonParameters)
         {
-            var endpointURL = _baseUrl + endPoint;
-            long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
-            var json = jsonParameters.Replace(" ", "");
-            var nonceParameter = "\"nonce\"" + ":" + nonce;
-            if (json != "{}")
+            try
             {
-                nonceParameter += ",";
-            }
+                var endpointURL = _baseUrl + endPoint;
+                long nonce = (long)(DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+                var json = jsonParameters.Replace(" ", "");
+                var nonceParameter = "\"nonce\"" + ":" + nonce;
+                if (json != "{}")
+                {
+                    nonceParameter += ",";
+                }
 
-            var parameters = jsonParameters.Trim().Insert(1, nonceParameter);
-            var parameterBytes = Encoding.UTF8.GetBytes(parameters);
-            var signedData = SignData(parameterBytes);
-            var request = MakeRequest(endpointURL, parameterBytes, signedData);
-            return MakeCall(parameterBytes, request);
+                var parameters = jsonParameters.Trim().Insert(1, nonceParameter);
+                var parameterBytes = Encoding.UTF8.GetBytes(parameters);
+                var signedData = SignData(parameterBytes);
+                var request = MakeRequest(endpointURL, parameterBytes, signedData);
+                return MakeCall(parameterBytes, request);
+            }
+            catch (Exception e)
+            {
+                return e.Message;
+            }
         }
 
         private HttpWebRequest MakeRequest(string endpointURL, byte[] parameterBytes, string signedData)

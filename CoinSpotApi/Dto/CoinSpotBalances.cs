@@ -10,8 +10,29 @@ namespace CoinSpotApi.Dto
 
         private readonly string _myCurrency;
 
+        public List<Dictionary<string, CoinSpotHolding>> Coins => balances;
+
         public CoinSpotBalances()
             => _myCurrency = CoinspotService.GetAppSetting("myCurrency");
+
+        public bool SetBalance(string coin, CoinSpotHolding holding)
+        {
+            foreach (var hold in balances)
+            {
+                if (hold.ContainsKey(coin))
+                {
+                    hold[coin] = holding;
+                    return true;
+                }
+            }
+
+            var dict = new Dictionary<string, CoinSpotHolding>
+            {
+                { coin, holding }
+            };
+            balances.Add(dict);
+            return false;
+        }
 
         public float GetTotal()
         {
@@ -41,6 +62,48 @@ namespace CoinSpotApi.Dto
                 }
             }
             return sb.ToString();
+        }
+
+        public bool HasCoin(string coin)
+        {
+            return GetHolding(coin) != null;
+        }
+
+        public void AddCoin(string coin, CoinSpotHolding holding)
+        {
+            if (HasCoin(coin))
+            {
+                return;
+            }
+
+            var newHolding = new Dictionary<string, CoinSpotHolding> { { coin, holding } };
+            balances.Add(newHolding);
+        }
+
+        public bool SetHolding(string coin, CoinSpotHolding holding)
+        {
+            var hold = GetHolding(coin);
+            if (hold == null)
+                return false;
+
+            hold.balance = holding.balance;
+            hold.audbalance = holding.audbalance;
+            hold.rate = holding.rate;
+            return true;
+        }
+
+        public CoinSpotHolding GetHolding(string coin)
+        {
+            foreach (var holding in balances)
+            {
+                foreach (var kv in holding)
+                {
+                    if (kv.Key == coin)
+                        return kv.Value;
+                }
+            }
+
+            return null;
         }
     }
 }

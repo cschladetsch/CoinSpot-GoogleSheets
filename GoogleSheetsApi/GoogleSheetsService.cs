@@ -9,6 +9,7 @@ using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
+using System;
 
 namespace GoogleSheetsApi
 {
@@ -60,6 +61,15 @@ namespace GoogleSheetsApi
             var columns = new List<object> { value };
             rect.Add(columns);
             return SetRange(range, rect);
+        }
+
+        public void BatchWrite(IList<IList<object>> ranges)
+        {
+            //BatchUpdateValuesRequest body = new BatchUpdateValuesRequest();
+            //body.ValueInputOption = SpreadsheetsResource.ValuesResource.BatchUpdateRequest
+
+            //_sheetsService.Spreadsheets.Values.BatchUpdate(body, _spreadSheetId);
+            throw new NotImplementedException();
         }
 
         public bool SetRange(string range, IList<IList<object>> values)
