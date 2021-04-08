@@ -138,6 +138,7 @@ namespace CryptoHelper
 
         private void AddActions()
         {
+            AddAction("w", "Update balance sheet", _commands.UpdateBalanceSheet);
             AddAction("s", "Summary status of all holdings", _commands.ShowStatus);
             AddAction("g", "Show gain percent", _commands.ShowGainPercent);
             AddAction("u", "Update Google Spreadsheet", _commands.UpdateGoogleSpreadSheet);

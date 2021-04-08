@@ -2,12 +2,11 @@
 using System.Configuration;
 using System.Collections.Generic;
 
-using Newtonsoft.Json;
 using CoinSpotApi.Dto;
 
 namespace CryptoHelper.App
 {
-    class SheetUpdater
+    partial class SheetUpdater
     {
         // You will want to change these in `App.Config` to match your local setup in App.config.
         private static string SpentRange;
@@ -57,9 +56,8 @@ namespace CryptoHelper.App
                 var date = now.ToString("dd MMM yy HH:mm:ss");
                 var time = now.ToLongTimeString();
 
-                //UpdateSummary(value, date, time);
-                //UpdatePricesTable(value, date);
-                UpdateBalancesTable();
+                UpdateSummary(value, date, time);
+                UpdatePricesTable(value, date);
 
                 Program.Line("Updated SpreadSheet");
             }
@@ -69,49 +67,12 @@ namespace CryptoHelper.App
             }
         }
 
-        class RecordedHolding
-        {
-            public string Coin;
-            public float Holding;
-            public float BuyInPrice;
-            public float CurrentPrice;
-
-            public RecordedHolding(IList<object> list)
-            {
-                Coin = (string)list[0];
-                Holding = float.Parse((string)list[1]);
-                BuyInPrice = float.Parse((string)list[2]);
-                CurrentPrice = float.Parse((string)list[3]);
-            }
-
-            public override string ToString()
-            {
-                return $"{Coin} {Holding} {BuyInPrice} {CurrentPrice}";
-            }
-        }
-
-        class RecordedHoldings
-        {
-            public Dictionary<string, RecordedHolding> Holdings = new Dictionary<string, RecordedHolding>();
-
-            public void Add(RecordedHolding holding)
-            {
-                var coin = holding.Coin;
-                if (!Holdings.TryGetValue(coin, out var value))
-                {
-                    Holdings.Add(coin, holding);
-                }
-                Holdings[coin] = holding;
-            }
-        }
-
         private RecordedHoldings GetSpreadsheetBalances()
         {
             var inSpreadSheet = _googleSheetsService.GetRange(BalancesTable);
             var recorded = new RecordedHoldings();
             foreach (var item in inSpreadSheet)
             {
-                var coin = (string)item[0];
                 recorded.Add(new RecordedHolding(item));
             }
             return recorded;
@@ -124,13 +85,31 @@ namespace CryptoHelper.App
             public List<string> Delete = new List<string>();    // exists in spreadsheet, not in balances
         }
 
-        private void UpdateBalancesTable()
+        public string UpdateBalanceSheet()
         {
             var balances = _coinspotService.GetMyBalances();
             var inSpreadSheet = GetSpreadsheetBalances();
             var prices = _coinspotService.GetAllPrices();
 
             var diff = GetDifferences(balances, inSpreadSheet);
+            WriteChanges(prices, diff);
+            return "Balance sheet updated";
+        }
+
+        private void WriteChanges(CoinSpotAllPrices prices, Differences diff)
+        {
+            foreach (var del in diff.Delete)
+            {
+                //_googleSheetsService.DeleteMatching(BalancesTable, 0, del);
+            }
+            foreach (var add in diff.New)
+            {
+                //_googleSheetsService.AppendMatching(BalancesTable, 0, add, )
+            }
+            foreach (var upd in diff.Update)
+            {
+                //_googleSheetsService.UpdateMatching(BalancesTable, 0, upd, ...)
+            }
         }
 
         private static Differences GetDifferences(CoinSpotBalances balances, RecordedHoldings recorded)
@@ -157,22 +136,32 @@ namespace CryptoHelper.App
         {
             foreach (var balance in balances.balances)
             {
-                foreach (var holding in balance)
-                {
-                    var coin = holding.Key;
-                    if (recorded.Holdings.ContainsKey(coin))
-                    {
-                        diff.Update.Add(coin);
-                    }
-                    else if (!balances.HasCoin(coin))
-                    {
-                        diff.Delete.Add(coin);
-                    }
-                    else
-                    {
-                        diff.New.Add(coin);
-                    }
-                }
+                CheckBalance(balances, recorded, diff, balance);
+            }
+        }
+
+        private static void CheckBalance(CoinSpotBalances balances, RecordedHoldings recorded, Differences diff, Dictionary<string, CoinSpotHolding> balance)
+        {
+            foreach (var holding in balance)
+            {
+                UpdateBalanceAgainstRecorded(balances, recorded, diff, holding);
+            }
+        }
+
+        private static void UpdateBalanceAgainstRecorded(CoinSpotBalances balances, RecordedHoldings recorded, Differences diff, KeyValuePair<string, CoinSpotHolding> holding)
+        {
+            var coin = holding.Key;
+            if (recorded.Holdings.ContainsKey(coin))
+            {
+                diff.Update.Add(coin);
+            }
+            else if (!balances.HasCoin(coin))
+            {
+                diff.Delete.Add(coin);
+            }
+            else
+            {
+                diff.New.Add(coin);
             }
         }
 

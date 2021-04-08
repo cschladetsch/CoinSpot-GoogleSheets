@@ -22,6 +22,9 @@ namespace CryptoHelper.App
         public void Buy(params string[] args)
             => _coinspotService.Buy(args[0], float.Parse(args[1]));
 
+        public void UpdateBalanceSheet(params string[] args)
+            => Line(_sheetUpdater.UpdateBalanceSheet());
+
         public void ShowSellOrders(params string[] args)
             => Line(GetAllTransactions().SellOrdersToString());
 

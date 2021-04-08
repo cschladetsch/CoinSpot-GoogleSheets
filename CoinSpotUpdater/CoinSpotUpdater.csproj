@@ -85,6 +85,7 @@
   <ItemGroup>
     <Compile Include="App\Command.cs" />
     <Compile Include="App\Commands.cs" />
+    <Compile Include="App\RecordedHoldings.cs" />
     <Compile Include="App\SheetUpdater.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
