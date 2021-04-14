@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoinSpotUpdater", "CoinSpotUpdater\CoinSpotUpdater.csproj", "{FFCA23EB-06B8-40C6-B3DC-BC1C423DC762}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoinSpotUpdaterApp", "CoinSpotUpdater\CoinSpotUpdaterApp.csproj", "{FFCA23EB-06B8-40C6-B3DC-BC1C423DC762}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8A98C474-2B75-45CC-9AE9-589462E595B3}"
 	ProjectSection(SolutionItems) = preProject

@@ -49,6 +49,9 @@
     <PackageReference Include="Google.Apis.Sheets.v4">
       <Version>1.50.0.2231</Version>
     </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>13.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="credentials.json">

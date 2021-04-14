@@ -155,11 +155,11 @@ namespace CryptoHelper.App
             ConsoleColor diffColor;
             var neg = diffGain < 0;
 
-            if (Math.Abs(diffGain) < 0.01f)
+            if (Math.Abs(diffGain) < 0.05f)
                 diffColor = ConsoleColor.DarkGray;
-            else if (neg && diffGain > -0.08f)
+            else if (neg && diffGain > -0.10f)
                 diffColor = ConsoleColor.DarkRed;
-            else if (!neg && diffGain < 0.08f)
+            else if (!neg && diffGain < 0.25f)
                 diffColor = ConsoleColor.DarkGreen;
             else
                 diffColor = diffGain < 0 ? ConsoleColor.Red : ConsoleColor.Green;
